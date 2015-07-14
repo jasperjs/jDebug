@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>my-app</title>
+    <base href="./" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <!-- STYLES -->
+
+	<link rel="stylesheet" href="/jDebug/css/base.css"/>
+	<link rel="stylesheet" href="/jDebug/app/main/components/my-button/my-button.css"/>
+
+	<!-- /STYLES -->
+
+</head>
+<body ng-app="app">
+
+    <h1>my-app</h1>
+
+    <div ng-view>
+
+    </div>
+
+    <!-- SCRIPTS -->
+
+	<script src="/jDebug/node_modules/angular/angular.js"></script>
+	<script src="/jDebug/node_modules/angular-route/angular-route.js"></script>
+	<script src="/jDebug/node_modules/scriptjs/dist/script.js"></script>
+	<script src="/jDebug/node_modules/jasperjs/jasper.js"></script>
+	<script src="/jDebug/app/_areas.debug.js"></script>
+	<script src="/jDebug/app/_routes.debug.js"></script>
+	<script src="/jDebug/app/bootstrap.js"></script>
+
+	<!-- /SCRIPTS -->
+	<script src="/jDebug/dist/jdebug.js"></script>
+</body>
+</html>

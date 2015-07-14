@@ -1,0 +1,6 @@
+{
+  "type": "decorator",
+  "ctrl": "spa.main.decorators.CountLoops",
+  "properties": "",
+  "events": ""
+}

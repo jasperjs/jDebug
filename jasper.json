@@ -1,0 +1,16 @@
+{
+  "baseCss": [
+    "css/base.css"
+  ],
+  "bootstrapScripts": [
+    "node_modules/angular/angular.js",
+    "node_modules/angular-route/angular-route.js",
+    "node_modules/scriptjs/dist/script.js",
+    "node_modules/jasperjs/jasper.js",
+
+    "%areas_config%",
+    "%routes_config%",
+    "app/bootstrap.js"
+  ]
+
+}

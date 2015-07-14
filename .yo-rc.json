@@ -1,0 +1,6 @@
+{
+  "generator-jasper": {
+    "appModuleName": "spa",
+    "appPath": "app"
+  }
+}
