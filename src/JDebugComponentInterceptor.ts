@@ -1,113 +1,171 @@
-/// <reference path="../typed/angular.d.ts" />
-/// <reference path="../typed/jquery.d.ts" />
 module jDebug {
-
-    interface IDirectiveDefinitionCollection {
-        [name: string]: DirectiveDefinition;
-    }
-
     class DirectiveDefinition {
         ddo:ng.IDirective;
-        templateElement:JQuery;
+        name:string;
+        tempalteId:string;
+        cloneTemplateElement:JQuery;
+        transcludeContent:any;
 
+        parentScope:ng.IScope;
         instances:DirectiveInstance[] = [];
+
+        hasInstances:boolean;
 
         addInstance(instance:DirectiveInstance) {
             this.instances.push(instance);
+            this.hasInstances = true;
         }
 
+        // TODO remove definition if no instances
         removeInstance(instance:DirectiveInstance) {
             var indx = this.instances.indexOf(instance);
             if (indx >= 0) {
                 this.instances.splice(indx, 1);
             }
+            this.hasInstances = this.instances.length > 0;
         }
     }
 
     class DirectiveInstance {
         element:JQuery;
-        scope:ng.IScope;
     }
 
-    export class JDebugComponentInterceptor {
+    export class JDebugComponentInterceptor implements jasper.core.IDirectiveInterceptor {
 
         static repeatDirectives = ['ng-repeat'];
+        private definitions:DirectiveDefinition[] = [];
 
-        private definitions:IDirectiveDefinitionCollection = {};
-
-        constructor(private templateCache:ng.ITemplateCacheService, private compile:ng.ICompileService, private http:ng.IHttpService) {
-
+        constructor(private templateCache:ng.ITemplateCacheService,
+                    private compile:ng.ICompileService,
+                    private http:ng.IHttpService,
+                    private scripts:JDebugScriptManager,
+                    private registrar:jasper.core.HtmlComponentRegistrar) {
         }
 
-        onCompile(directive:ng.IDirective, tElement:JQuery) {
-            if (this.definitions[directive.name]) {
+        onRegister(component:jasper.core.IHtmlComponentDefinition) {
+            var ddo = this.registrar.createDirectiveFor(component);
+            this.registerProxyDirective(component.name, ddo);
+        }
+
+        onCompile(directive:ng.IDirective, tElement:JQuery, tAttrs:any, transcludeFn:any) {
+            //
+        }
+
+        onMount(directive:ng.IDirective, scope:ng.IScope, iElement:JQuery, attrs, transclude) {
+            var elementDebugId = iElement.attr(directiveIdKey);
+            if (!elementDebugId) {
+                console.warn('jDebug: mounted directive \"' + directive.name + '\" dont have a debugid');
                 return;
             }
-            var definition = new DirectiveDefinition();
-            definition.ddo = directive;
-            definition.templateElement = tElement.clone();
-            this.definitions[directive.name] = definition;
+
+            var definitions = this.definitions.filter((d:DirectiveDefinition)=> {
+                return d.tempalteId === elementDebugId;
+            });
+
+            if (definitions.length === 0) {
+                console.warn('jDebug: mounted directive with name \"' + directive.name + '\", debugId: \"' + elementDebugId + '\" not found');
+                return;
+            }
+
+            if (definitions.length > 1) {
+                console.warn('jDebug: multiple components with name \"' + directive.name + '\" found');
+                return;
+            }
+
+            var definition:DirectiveDefinition = definitions[0];
+
+            var instance = new DirectiveInstance();
+            instance.element = iElement;
+
+            instance.element.on('$destroy', ()=> {
+                scope.$destroy();
+                definition.removeInstance(instance);
+            });
+
+            definition.addInstance(instance);
         }
 
-        onLink(directive:ng.IDirective, scope:ng.IScope, iElement:JQuery) {
-            var definition = this.definitions[directive.name];
+        /**
+         * Controller (*.js file) of the component has been updated
+         * @param name
+         * @param src
+         */
+        updateComponentDefinition(component:jasper.core.IHtmlComponentDefinition, src?:string) {
+            var definition = this.definitions[component.name];
             if (definition) {
-                var instance = new DirectiveInstance();
-                instance.element = iElement;
-                instance.scope = scope;
+                var update = ()=> {
+                    var ddo = this.registrar.createDirectiveFor(component);
+                    updateDirectiveDefinition(component.name, [ddo]);
+                    this.updateComponent(definition);
+                };
 
-                definition.addInstance(instance);
-                instance.element.on('$destroy', ()=> {
-                    scope.$destroy();
-                    definition.removeInstance(instance);
-                });
+                if (src) {
+                    this.scripts.updateScript(src, () => update());
+                } else {
+                    update();
+                }
+
+            } else {
+                console.warn('jDebug: component with name \"' + component.name + '\" not registered in the application.');
             }
         }
+
 
         /**
          * templateUrl of the component has been updated
          * @param name      name of the component
          */
         updateComponentTemplateUrl(name:string) {
-            var definition = this.definitions[name];
-            if (definition) {
-                if(!definition.ddo.templateUrl){
-                    console.error('Component with name ', name, ' does not has a templateUrl parameter');
+            var definitions = this.getDefinitionsByName(name);
+            if (definitions.length) {
+                var templateUrl = definitions[0].ddo.templateUrl;
+                if (!templateUrl) {
+                    console.error('jDebug: component with name ', name, ' does not has a templateUrl parameter');
                     return;
                 }
-                this.updateTemplate(definition.ddo.templateUrl).then(()=>{
-                    this.updateComponent(definition);
+                this.updateTemplate(templateUrl).then(()=> {
+                    for (var i = 0; i < definitions.length; i++) {
+                        var def = definitions[i];
+                        this.updateComponent(def);
+                    }
                 });
+            } else {
+                console.warn('jDebug: component with name \"' + name + '\" not registered in the application.');
             }
         }
 
+        private getDefinitionsByName(name:string):DirectiveDefinition[] {
+            return this.definitions.filter(d=>d.name === name);
+        }
+
         private updateComponent(definition:DirectiveDefinition) {
-            // component repeated via ng-repeat
-            var isRepeatedComponent = this.isRepeatTemplate(definition.templateElement);
+            var directiveScope = definition.parentScope;
             for (var i = definition.instances.length - 1; i >= 0; i--) {
 
                 var instance = definition.instances[i];
-                var directiveScope = instance.element['scope']();
-                if (!directiveScope) {
-                    directiveScope = instance.scope.$parent;
-                }
 
-                var updateComponent = () => {
-                    var compileResult = this.compile(definition.templateElement.clone());
-                    var newElement = compileResult(directiveScope);
-                    instance.element.replaceWith(newElement);
-                };
+                if (i === 0) {
+                    // the last instance, update it
+                    var parent = definition.cloneTemplateElement.clone();
 
-                if (isRepeatedComponent) {
-                    if (i === 0) {// last repeated component, update it
-                        updateComponent();
-                    }
-                    else {
-                        instance.element.remove(); // just remove copy
+                    if (definition.ddo.transclude && definition.transcludeContent) {
+                        var transcludeContent = definition.transcludeContent.clone();
+                        if (transcludeContent) {
+                            parent.append(transcludeContent);
+                        }
+                        var compileResult = this.compile(parent);
+                        var newElement = compileResult(directiveScope);
+                        updateDomElement(instance.element, newElement, directiveScope);
+                    } else {
+                        var compileResult = this.compile(parent);
+                        var newElement = compileResult(directiveScope);
+                        updateDomElement(instance.element, newElement, directiveScope);
                     }
                 } else {
-                    updateComponent();
+                    // just remove copy
+                    removeDomElement(instance.element, directiveScope);
                 }
+
             }
 
         }
@@ -125,6 +183,61 @@ module jDebug {
             }
             return false;
         }
+
+        private registerProxyDirective(name:string, original:ng.IDirective) {
+            var captureDdo = {
+                restrict: original.restrict,
+                transclude: false,
+                scope: false,
+                priority: 10000,
+                compile: (tElement:JQuery, tAttrs:any)=> {
+
+                    var definition = new DirectiveDefinition();
+                    definition.name = name;
+                    definition.cloneTemplateElement = tElement.clone();
+                    definition.cloneTemplateElement.empty();
+
+                    definition.ddo = original;
+                    definition.tempalteId = jDebug.makeRandomId();
+                    tElement.attr(directiveIdKey, definition.tempalteId);
+
+                    if (original.transclude) {
+                        definition.transcludeContent = tElement.contents().clone();
+                    }
+
+                    this.definitions.push(definition);
+
+                    return {
+                        pre: (scope:ng.IScope) => {
+                            definition.parentScope = scope; //store component parent scope
+                            // remove defintion if parent scope is destroyed
+
+                            // we can't because parent scope can be recreated by ng-if, for instance...
+
+                            //definition.parentScope.$on('$destroy', ()=> {
+                            //    var indx = this.definitions.indexOf(definition);
+                            //    if (indx >= 0) {
+                            //        this.definitions.splice(indx, 1);
+                            //    }
+                            //});
+                        }
+                    };
+                }
+            };
+
+            this.registrar['directive'](name, ()=>captureDdo);
+        }
+
+        private getDefinitionById(tid:string):DirectiveDefinition {
+            for (var i = 0; i < this.definitions.length; i++) {
+                var def = this.definitions[i];
+                if (def.tempalteId === tid) {
+                    return def;
+                }
+            }
+            return undefined;
+        }
+
 
     }
 

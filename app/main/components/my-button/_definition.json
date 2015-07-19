@@ -3,5 +3,7 @@
   "type": "component",
   "properties": "color",
   "events": "",
+  "require": "^homePage",
+  "transclude": true,
   "ctrl": "spa.main.components.MyButton"
 }

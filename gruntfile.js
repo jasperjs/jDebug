@@ -32,6 +32,7 @@ module.exports = function (grunt) {
                 declaration: false,
                 references: [
                     'typed/*.d.ts',
+                    'dist/*.d.ts',
                     'node_modules/jasperjs/jasper.d.ts'
                 ]
             },

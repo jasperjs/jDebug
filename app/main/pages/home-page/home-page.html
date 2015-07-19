@@ -3,7 +3,30 @@
 </p>
 
 <button ng-click="vm.click()">Click!</button>
+<button ng-click="vm.hideCmp = !vm.hideCmp">TOGGLE!</button>
+<button ng-click="vm.plus()">Plus 1</button>
 
-<!--<my-button ng-repeat="i in [1,2,3]"  bind-color="vm.name"></my-button>-->
+<h3>Updates:</h3>
+<button ng-click="vm.update('homePage')">homePage</button>
+<button ng-click="vm.update('myButton')">myButton</button>
+<button ng-click="vm.update('myDialog')">myDialog</button>
 
-<my-button ng-repeat="i in [1,2,3]" bind-color="vm.name"></my-button>
+<h3>ngRepeat with components:</h3>
+<my-button ng-repeat="i in vm.copies">
+    <button ng-click="vm.click()">Repeated</button>
+</my-button>
+
+<h3>Simple transclusion</h3>
+<my-button bind-color="vm.name">
+    <button ng-click="vm.click()">Click!</button>
+</my-button>
+
+<h3>Transclude with other component, ng-if:</h3>
+<my-button bind-color="vm.name" ng-if="!vm.hideCmp">
+    <my-dialog></my-dialog>
+</my-button>
+
+<h3>Transclude with other component, ng-show:</h3>
+<my-button bind-color="vm.name" ng-show="!vm.hideCmp">
+    <my-dialog></my-dialog>
+</my-button>

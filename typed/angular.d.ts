@@ -1026,7 +1026,7 @@ interface ICloneAttachFunction {
 
 // This corresponds to the "publicLinkFn" returned by $compile.
 interface ITemplateLinkingFunction {
-    (scope: IScope, cloneAttachFn?: ICloneAttachFunction): IAugmentedJQuery;
+    (scope: IScope, cloneAttachFn?: ICloneAttachFunction, options?): IAugmentedJQuery;
 }
 
 // This corresponds to $transclude (and also the transclude function passed to link).

@@ -10,12 +10,12 @@ module spa.main.components {
             //place your initialize logic here
         }
 
-        link(element: HTMLElement){
-            console.log('m');
+        change() {
+            this.color = 'green';
         }
 
-        change() {
-            this.color = 'blue';
+        link(element: HTMLElement, homePage: pages.HomePage, transclude){
+            //console.log(homePage);
         }
     }
 }

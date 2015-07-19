@@ -1,0 +1,7 @@
+{
+  "templateFile": "my-dialog.html",
+  "type": "component",
+  "properties": "",
+  "events": "",
+  "ctrl": "spa.main.components.MyDialog"
+}
