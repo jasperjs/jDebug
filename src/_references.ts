@@ -4,7 +4,7 @@
 ///<reference path="directives/NgIf.ts" />
 ///<reference path="directives/NgRepeat.ts" />
 
-
+///<reference path="JDebugDirectiveInjector.ts" />
 ///<reference path="JDebugComponentInterceptor.ts" />
 ///<reference path="JDebugScriptManager.ts" />
 ///<reference path="JDebugStylesManager.ts" />

@@ -91,12 +91,13 @@ module jDebug {
          * @param src
          */
         updateComponentDefinition(component:jasper.core.IHtmlComponentDefinition, src?:string) {
-            var definition = this.definitions[component.name];
-            if (definition) {
-                var update = ()=> {
+            var definitions = this.getDefinitionsByName(component.name);
+            if (definitions.length) {
+                var update = () => {
                     var ddo = this.registrar.createDirectiveFor(component);
-                    updateDirectiveDefinition(component.name, [ddo]);
-                    this.updateComponent(definition);
+                    var proxyDdo = this.createProxyDirective(component.name, ddo);
+                    updateDirectiveDefinition(component.name, [ddo, proxyDdo]);
+                    this.updateComponents(definitions);
                 };
 
                 if (src) {
@@ -123,12 +124,7 @@ module jDebug {
                     console.error('jDebug: component with name ', name, ' does not has a templateUrl parameter');
                     return;
                 }
-                this.updateTemplate(templateUrl).then(()=> {
-                    for (var i = 0; i < definitions.length; i++) {
-                        var def = definitions[i];
-                        this.updateComponent(def);
-                    }
-                });
+                this.updateTemplate(templateUrl).then(() => this.updateComponents(definitions));
             } else {
                 console.warn('jDebug: component with name \"' + name + '\" not registered in the application.');
             }
@@ -136,6 +132,10 @@ module jDebug {
 
         private getDefinitionsByName(name:string):DirectiveDefinition[] {
             return this.definitions.filter(d=>d.name === name);
+        }
+
+        private updateComponents(definitions:DirectiveDefinition[]) {
+            definitions.forEach(d=>this.updateComponent(d));
         }
 
         private updateComponent(definition:DirectiveDefinition) {
@@ -185,7 +185,13 @@ module jDebug {
         }
 
         private registerProxyDirective(name:string, original:ng.IDirective) {
-            var captureDdo = {
+            var ddo = this.createProxyDirective(name, original);
+
+            this.registrar['directive'](name, ()=> ddo);
+        }
+
+        private createProxyDirective(name: string, original: ng.IDirective): ng.IDirective{
+            return {
                 restrict: original.restrict,
                 transclude: false,
                 scope: false,
@@ -224,8 +230,6 @@ module jDebug {
                     };
                 }
             };
-
-            this.registrar['directive'](name, ()=>captureDdo);
         }
 
         private getDefinitionById(tid:string):DirectiveDefinition {

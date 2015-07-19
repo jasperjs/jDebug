@@ -23,5 +23,10 @@ module spa.main.pages {
             jDebug.components.updateComponentTemplateUrl(name);
         }
 
+
+        updateCode(def: any, scriptPath: string){
+            jDebug.components.updateComponentDefinition(def, scriptPath);
+        }
+
     }
 }

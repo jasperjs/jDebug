@@ -7,7 +7,7 @@ module jDebug {
     export var directiveIdKey = 'jdebug-id';
 
     var services:jasper.core.ServiceRegistrar, animate:ng.IAnimateService;
-    var injector:any;
+    var injector:JDebugDirectiveInjector;
 
     export function initializeDebug() {
         if (!angular || !jasper) {
@@ -17,8 +17,8 @@ module jDebug {
         var appRootElement = document.querySelector('[ng-app]') ||
             document.querySelector('[j-debug-root]') || document;
 
-        injector = angular.element(appRootElement).injector();
-        if (!injector) {
+        var angularInjector = angular.element(appRootElement).injector();
+        if (!angularInjector) {
             console.error('Could not find an injector. Mark application root DOM node with ng-app or j-debug-root attribute');
             return;
         }
@@ -29,15 +29,16 @@ module jDebug {
         // styles
         styles = new JDebugStylesManager();
 
-        var $compile = <ng.ICompileService>injector.get('$compile');
-        var $templateCache = <ng.ITemplateCacheService>injector.get('$templateCache');
-        var $http = <ng.IHttpService>injector.get('$http');
-        var jasperComponentRegistrar = <jasper.core.HtmlComponentRegistrar>injector.get('jasperComponent');
-        services = <jasper.core.ServiceRegistrar>injector.get('jasperService');
-        animate = <ng.IAnimateService>injector.get('$animate');
+        var $compile = <ng.ICompileService>angularInjector.get('$compile');
+        var $templateCache = <ng.ITemplateCacheService>angularInjector.get('$templateCache');
+        var $http = <ng.IHttpService>angularInjector.get('$http');
+        var jasperComponentRegistrar = <jasper.core.HtmlComponentRegistrar>angularInjector.get('jasperComponent');
+        services = <jasper.core.ServiceRegistrar>angularInjector.get('jasperService');
+        animate = <ng.IAnimateService>angularInjector.get('$animate');
         components = new JDebugComponentInterceptor($templateCache, $compile, $http, scripts, jasperComponentRegistrar);
         jasperComponentRegistrar.setInterceptor(components);
 
+        overrideInjector(angularInjector);
         // override default directives:
         overrideDirectives();
     }
@@ -95,8 +96,8 @@ module jDebug {
     export function onJDebugCmpDestroy(scope:ng.IScope, element:ng.IAugmentedJQuery, callback:Function) {
         var debugId = element.attr(directiveIdKey);
         if (!debugId) return;
-        var sub = scope.$on('jdebug:destroy', (e, id)=>{
-            if(id === debugId){
+        var sub = scope.$on('jdebug:destroy', (e, id)=> {
+            if (id === debugId) {
                 sub();
                 callback();
             }
@@ -114,16 +115,18 @@ module jDebug {
             if (typeof(ddo.scope) !== 'object') {
                 bindings.isolateScope = null;
             }
+            ddo['$$bindings'] = bindings;
             if (bindings.isolateScope) {
                 ddo['$$isolateBindings'] = bindings.isolateScope;
             }
         });
 
-        services.registerFactory(name + 'Directive', () => ddos);
-        //this.registrar.update(component);
+        injector.updateDirective(name, ()=> ddos);
     }
 
-
+    function overrideInjector(angularInjector) {
+        injector = new JDebugDirectiveInjector(angularInjector);
+    }
 }
 
 
