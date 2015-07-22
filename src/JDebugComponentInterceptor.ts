@@ -6,7 +6,6 @@ module jDebug {
         cloneTemplateElement:JQuery;
         transcludeContent:any;
 
-        parentScope:ng.IScope;
         instances:DirectiveInstance[] = [];
 
         hasInstances:boolean;
@@ -28,11 +27,10 @@ module jDebug {
 
     class DirectiveInstance {
         element:JQuery;
+        scope: ng.IScope;
     }
 
     export class JDebugComponentInterceptor implements jasper.core.IDirectiveInterceptor {
-
-        static repeatDirectives = ['ng-repeat'];
         private definitions:DirectiveDefinition[] = [];
 
         constructor(private templateCache:ng.ITemplateCacheService,
@@ -76,7 +74,7 @@ module jDebug {
 
             var instance = new DirectiveInstance();
             instance.element = iElement;
-
+            instance.scope = scope;
             instance.element.on('$destroy', ()=> {
                 scope.$destroy();
                 definition.removeInstance(instance);
@@ -139,12 +137,13 @@ module jDebug {
         }
 
         private updateComponent(definition:DirectiveDefinition) {
-            var directiveScope = definition.parentScope;
+
             for (var i = definition.instances.length - 1; i >= 0; i--) {
 
                 var instance = definition.instances[i];
+                var directiveScope = instance.scope.$parent;
 
-                if (i === 0) {
+                if (!isRepeatTemplate(instance.element) || i === 0) {
                     // the last instance, update it
                     var parent = definition.cloneTemplateElement.clone();
 
@@ -175,18 +174,8 @@ module jDebug {
             return this.http.get(url).then(result => this.templateCache.put(url, result.data));
         }
 
-        private isRepeatTemplate(element:JQuery):boolean {
-            for (var i = 0; i < JDebugComponentInterceptor.repeatDirectives.length; i++) {
-                if (element.attr(JDebugComponentInterceptor.repeatDirectives[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private registerProxyDirective(name:string, original:ng.IDirective) {
             var ddo = this.createProxyDirective(name, original);
-
             this.registrar['directive'](name, ()=> ddo);
         }
 
@@ -215,7 +204,7 @@ module jDebug {
 
                     return {
                         pre: (scope:ng.IScope) => {
-                            definition.parentScope = scope; //store component parent scope
+                            //definition.parentScope = scope; //store component parent scope
                             // remove defintion if parent scope is destroyed
 
                             // we can't because parent scope can be recreated by ng-if, for instance...

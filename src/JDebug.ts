@@ -5,9 +5,17 @@ module jDebug {
     export var scripts:JDebugScriptManager;
     export var styles:JDebugStylesManager;
     export var directiveIdKey = 'jdebug-id';
+    export var repeatDirectives = ['ng-repeat'];
 
     var services:jasper.core.ServiceRegistrar, animate:ng.IAnimateService;
     var injector:JDebugDirectiveInjector;
+
+    var transclusions: TransclusionElement[] = [];
+
+    class TransclusionElement{
+        clone: any;
+        id: string;
+    }
 
     export function initializeDebug() {
         if (!angular || !jasper) {
@@ -122,6 +130,23 @@ module jDebug {
         });
 
         injector.updateDirective(name, ()=> ddos);
+    }
+
+    export function markElementAsTransclude(element: ng.IAugmentedJQuery){
+        var id = makeRandomId();
+        element.attr('jdebug-tid', id);
+        var t = new TransclusionElement();
+        t.clone = element.clone();
+        transclusions.push(t);
+    }
+
+    export function isRepeatTemplate(element:JQuery):boolean {
+        for (var i = 0; i < repeatDirectives.length; i++) {
+            if (element.attr(repeatDirectives[i])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function overrideInjector(angularInjector) {

@@ -15,15 +15,23 @@
 </p>
 <p>
     Code:
-    <button ng-click="vm.updateCode({'route':'/','ctor':'spa.main.pages.HomePage','name':'homePage','area':'main','templateUrl':'app/main/pages/home-page/home-page.html'}, 'app/main/pages/home-page/HomePage.js')">homePage</button>
-    <button ng-click="vm.updateCode({'properties':['color'],'require':'^homePage','transclude':true,'ctrl':'spa.main.components.MyButton','name':'myButton','templateUrl':'app/main/components/my-button/my-button.html'}, 'app/main/components/my-button/MyButton.js')">myButton</button>
-    <button ng-click="vm.updateCode({'ctrl':'spa.main.components.MyDialog','name':'myDialog','templateUrl':'app/main/components/my-dialog/my-dialog.html'}, 'app/main/components/my-dialog/MyDialog.js')">myDialog</button>
+    <button ng-click="vm.updateCode({'route':'/','ctor':'spa.main.pages.HomePage','name':'homePage','area':'main','templateUrl':'app/main/pages/home-page/home-page.html'}, 'app/main/pages/home-page/HomePage.js')">
+        homePage
+    </button>
+    <button ng-click="vm.updateCode({'properties':['color'],'require':'^homePage','transclude':true,'ctrl':'spa.main.components.MyButton','name':'myButton','templateUrl':'app/main/components/my-button/my-button.html'}, 'app/main/components/my-button/MyButton.js')">
+        myButton
+    </button>
+    <button ng-click="vm.updateCode({'ctrl':'spa.main.components.MyDialog','name':'myDialog','templateUrl':'app/main/components/my-dialog/my-dialog.html'}, 'app/main/components/my-dialog/MyDialog.js')">
+        myDialog
+    </button>
 </p>
 
 <h3>ngRepeat with components:</h3>
-<my-button bind-color="vm.name" ng-repeat="i in vm.copies">
-    <button ng-click="vm.click()">Repeated</button>
-</my-button>
+<div ng-repeat="i in vm.copies">
+    <my-button bind-color="i">
+        <button ng-click="vm.click()">Repeated</button>
+    </my-button>
+</div>
 
 <h3>Simple transclusion</h3>
 <my-button bind-color="vm.name">
