@@ -11,7 +11,6 @@ module jDebug {
                 console.warn('Style tag with href "' + href + '" not found in the DOM');
                 return;
             }
-            linkTag.parentNode.removeChild(linkTag);
 
             var noCacheHref = href + '?v=' + jDebug.makeRandomId();
             var newLink = document.createElement('link');
@@ -19,6 +18,10 @@ module jDebug {
             newLink.setAttribute('href', noCacheHref);
 
             document.head.appendChild(newLink);
+
+            setTimeout(()=>{
+                linkTag.parentNode.removeChild(linkTag);
+            }, 100);
         }
 
     }

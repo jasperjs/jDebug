@@ -10,11 +10,11 @@ module jDebug {
     var services:jasper.core.ServiceRegistrar, animate:ng.IAnimateService;
     var injector:JDebugDirectiveInjector;
 
-    var transclusions: TransclusionElement[] = [];
+    var transclusions:TransclusionElement[] = [];
 
-    class TransclusionElement{
-        clone: any;
-        id: string;
+    class TransclusionElement {
+        clone:any;
+        id:string;
     }
 
     export function initializeDebug() {
@@ -44,11 +44,17 @@ module jDebug {
         services = <jasper.core.ServiceRegistrar>angularInjector.get('jasperService');
         animate = <ng.IAnimateService>angularInjector.get('$animate');
         components = new JDebugComponentInterceptor($templateCache, $compile, $http, scripts, jasperComponentRegistrar);
-        jasperComponentRegistrar.setInterceptor(components);
+
+        if (jasperComponentRegistrar.setInterceptor) {
+            jasperComponentRegistrar.setInterceptor(components);
+        }
 
         overrideInjector(angularInjector);
         // override default directives:
         overrideDirectives();
+
+        var dispatcher = new JDebugEventDispatcher();
+        dispatcher.connect();
     }
 
     export function makeRandomId():string {
@@ -132,7 +138,7 @@ module jDebug {
         injector.updateDirective(name, ()=> ddos);
     }
 
-    export function markElementAsTransclude(element: ng.IAugmentedJQuery){
+    export function markElementAsTransclude(element:ng.IAugmentedJQuery) {
         var id = makeRandomId();
         element.attr('jdebug-tid', id);
         var t = new TransclusionElement();
