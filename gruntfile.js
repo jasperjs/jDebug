@@ -16,7 +16,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-karma');
 
     grunt.initConfig({
-        dist: 'dist',
+        dist: 'npm/lib',
         pkg: grunt.file.readJSON('package.json'),
         jasperPkg: grunt.file.readJSON('jasper.json'),
         clean: {
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
                 declaration: false,
                 references: [
                     'typed/*.d.ts',
-                    'dist/*.d.ts',
+                    'npm/lib/*.d.ts',
                     'node_modules/jasperjs/jasper.d.ts'
                 ]
             },

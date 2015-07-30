@@ -1,33 +1,4 @@
 Thumbs.db
-*.psess
-*.obj
-*.exe
-*.pdb
-*.user
-*.aps
-*.pch
-*.vspscc
-*_i.c
-*_p.c
-*.ncb
-*.suo
-*.sln.docstates
-*.tlb
-*.tlh
-*.bak
-*.cache
-*.ilk
-*.log
-[Bb]in
-[Dd]ebug*/
-*.lib
-*.sbr
-obj/
-[Rr]elease*/
-_ReSharper*/
-[Tt]est[Rr]esult*
-[Pp]ackages
-*.ssms_suo
 *.backup
 *.gitattributes
 
@@ -40,4 +11,4 @@ app/**/*.js.map
 test/**/*.js
 test/**/*.js.map
 
-dist
+lib

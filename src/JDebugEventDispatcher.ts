@@ -23,12 +23,9 @@ module jDebug {
                 console.warn('jDebug: websockets is not supported to debug the application');
                 return;
             }
-            var isError = false;
             this.ws = new WebSocket(this.wsConnectionString);
             this.ws.onclose = ()=> {
-                if (!isError) {
-                    setTimeout(this.connect.bind(this), 5000);
-                }
+                setTimeout(this.connect.bind(this), 5000);
             };
             this.ws.onmessage = (event:MessageEvent)=> {
                 this.dispatch(JSON.parse(event.data));
@@ -46,12 +43,12 @@ module jDebug {
                     jDebug.components.updateComponentTemplateUrl(message.data.component);
                     break;
                 case 2: // definition changed
-                    if (message.data.type === 'component') {
+                    if (this.isTypeSupported(message.data.type)) {
                         jDebug.components.updateComponentDefinition(message.data);
                     }
                     break;
                 case 3: // ctrl changed
-                    if (message.data.def.type === 'component') {
+                    if (this.isTypeSupported(message.data.def.type)) {
                         jDebug.components.updateComponentDefinition(message.data.def, message.data.src);
                     }
                     break;
@@ -59,7 +56,10 @@ module jDebug {
                     jDebug.styles.updateStyle(message.data);
                     break;
             }
-            console.log('jDebug: message received:', message);
+        }
+
+        private isTypeSupported(type:string) {
+            return type === 'component' || type === 'page';
         }
 
     }
