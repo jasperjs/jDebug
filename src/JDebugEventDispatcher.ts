@@ -33,7 +33,6 @@ module jDebug {
 
             this.ws.onerror = ()=> {
                 console.warn('jDebug: ws connection error');
-                isError = true;
             };
         }
 
