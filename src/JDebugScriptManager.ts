@@ -6,7 +6,7 @@ module jDebug {
         }
 
         updateScript(src:string, onDone?:Function) {
-            var scriptTag = document.querySelector('script[src^="' + src + '"]');
+            var scriptTag = document.querySelector('script[src*="' + src + '"]');
             if (!scriptTag) {
                 console.warn('Script tag with src "' + src + '" not found in the DOM');
                 return;

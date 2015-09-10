@@ -6,7 +6,7 @@ module jDebug {
         }
 
         updateStyle(href:string) {
-            var linkTag = document.querySelector('link[href^="' + href + '"]');
+            var linkTag = document.querySelector('link[href*="' + href + '"]');
             if (!linkTag) {
                 console.warn('Style tag with href "' + href + '" not found in the DOM');
                 return;
