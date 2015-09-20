@@ -63,15 +63,19 @@ module.exports = function (grunt) {
             options: {
                 singlePage: 'index.html',
                 appPath: 'app',
-                bootstrapScripts: '<%= jasperPkg.bootstrapScripts %>',
+                baseScripts: '<%= jasperPkg.baseScripts %>',
+                startup: '<%= jasperPkg.startup %>',
                 baseCss: '<%= jasperPkg.baseCss %>',
                 defaultRoutePath: '/',
-                packageOutput: 'dist'
+                packageOutput: 'dist',
+                jDebugEnabled: true,
+                jDebugStylePath: 'npm/lib/jdebug.css',
+                jDebugSrc: 'npm/lib/jdebug.js'
             },
 
             debug: {
                 options: {
-                    baseHref: '/jDebug/',
+                    baseHref: '/',
                     package: false
                 }
             },
