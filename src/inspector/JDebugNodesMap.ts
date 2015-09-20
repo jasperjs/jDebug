@@ -43,14 +43,14 @@ module jDebug.inspector {
                         component: component
                     }
                 }
-                currentNode = node.parentNode;
+                currentNode = currentNode.parentNode;
             }
 
             return null;
         }
 
         private getComponentForNode(node:Node):ComponentInfo {
-            if (this.weakNodesMap.has(node) || !this.weakNodesMap.has(node)) {
+            if (!this.isSupportWeakMap || !this.weakNodesMap.has(node)) {
                 return null;
             }
             return this.weakNodesMap.get(node);
