@@ -4,6 +4,10 @@
 ///<reference path="directives/NgIf.ts" />
 ///<reference path="directives/NgRepeat.ts" />
 
+///<reference path="inspector/ComponentInfo.ts" />
+///<reference path="inspector/JDebugNodesMap.ts" />
+///<reference path="inspector/JDebugInspector.ts" />
+
 ///<reference path="JDebugDirectiveInjector.ts" />
 ///<reference path="JDebugEventDispatcher.ts" />
 ///<reference path="JDebugComponentInterceptor.ts" />

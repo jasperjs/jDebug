@@ -36,7 +36,7 @@ module.exports = function (grunt) {
                     'node_modules/jasperjs/jasper.d.ts'
                 ]
             },
-            base: {
+            app: {
                 src: ['app/**/*.ts'],
                 watch: true
             },
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
     /**
      * Task builds jasper-application
      */
-    grunt.registerTask('default', ['typescript:base', 'typescript:jdebug', 'jasper:debug']);
+    grunt.registerTask('default', [ 'typescript:jdebug', 'typescript:app', 'jasper:debug']);
 
     /**
      * Task test the application

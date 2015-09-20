@@ -30,14 +30,19 @@ module jDebug {
         scope: ng.IScope;
     }
 
-    export class JDebugComponentInterceptor implements jasper.core.IDirectiveInterceptor {
+    export class JDebugComponentInterceptor implements jasper.core.IDirectiveInterceptor<jasper.core.IHtmlComponentDefinition> {
         private definitions:DirectiveDefinition[] = [];
+
+        private inspector: inspector.JDebugInspector = new inspector.JDebugInspector();
 
         constructor(private templateCache:ng.ITemplateCacheService,
                     private compile:ng.ICompileService,
                     private http:ng.IHttpService,
                     private scripts:JDebugScriptManager,
                     private registrar:jasper.core.HtmlComponentRegistrar) {
+
+            this.inspector.enable();
+
         }
 
         onRegister(component:jasper.core.IHtmlComponentDefinition) {
@@ -45,11 +50,11 @@ module jDebug {
             this.registerProxyDirective(component.name, ddo);
         }
 
-        onCompile(directive:ng.IDirective, tElement:JQuery, tAttrs:any, transcludeFn:any) {
+        onCompile(directive: ng.IDirective, tElement: JQuery, definition: jasper.core.IHtmlComponentDefinition) {
             //
         }
 
-        onMount(directive:ng.IDirective, scope:ng.IScope, iElement:JQuery, attrs, transclude) {
+        onMount(directive: ng.IDirective, scope: ng.IScope, iElement: JQuery, component: jasper.core.IHtmlComponentDefinition) {
             var elementDebugId = iElement.attr(directiveIdKey);
             if (!elementDebugId) {
                 console.warn('jDebug: mounted directive \"' + directive.name + '\" dont have a debugid');
@@ -81,6 +86,8 @@ module jDebug {
             });
 
             definition.addInstance(instance);
+
+            this.inspector.addComponentNode(iElement[0], component);
         }
 
         /**
