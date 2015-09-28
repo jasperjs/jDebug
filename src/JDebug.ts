@@ -7,6 +7,8 @@ module jDebug {
     export var directiveIdKey = 'jdebug-id';
     export var repeatDirectives = ['ng-repeat'];
 
+    export var dispatcher: JDebugEventDispatcher;
+
     var services:jasper.core.ServiceRegistrar, animate:ng.IAnimateService;
     var injector:JDebugDirectiveInjector;
 
@@ -37,6 +39,7 @@ module jDebug {
         // styles
         styles = new JDebugStylesManager();
 
+        var $rootScope = <ng.IScope>angularInjector.get('$rootScope');
         var $compile = <ng.ICompileService>angularInjector.get('$compile');
         var $templateCache = <ng.ITemplateCacheService>angularInjector.get('$templateCache');
         var $http = <ng.IHttpService>angularInjector.get('$http');
@@ -53,8 +56,10 @@ module jDebug {
         // override default directives:
         overrideDirectives();
 
-        var dispatcher = new JDebugEventDispatcher();
-        dispatcher.connect();
+        jDebug.dispatcher = new JDebugEventDispatcher();
+        jDebug.dispatcher.connect();
+
+        JDebugUi.initialize($compile, $rootScope, jasperComponentRegistrar);
     }
 
     export function makeRandomId():string {

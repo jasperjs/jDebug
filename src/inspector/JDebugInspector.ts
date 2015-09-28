@@ -7,6 +7,8 @@ module jDebug.inspector {
         private docMoveHandler = (e)=> this.onDocumentMove(e);
         private currentComponentNode:Node;
 
+        private onComponentClickHandler = (e)=>this.onComponentClick(e);
+
         addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
             this.nodesMap.addComponent(node, this.mapToComponentInfo(jasperComponent));
         }
@@ -28,27 +30,49 @@ module jDebug.inspector {
             }
         }
 
+
         private deselectCurrentNode() {
             if (this.currentComponentNode) {
                 var clsList = this.currentComponentNode['classList'];
                 if (clsList) {
                     clsList.remove('jdebug-inspector-selected');
                 }
+                this.unbindCurrentNode();
                 this.currentComponentNode = null;
             }
         }
 
+        private onComponentClick(e) {
+            var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
+            console.log(info);
+
+            e.preventDefault();
+            e.stopPropagation();
+
+        }
+
         private selectNode(node:Node) {
-            if(this.currentComponentNode === node){
+            if (this.currentComponentNode === node) {
                 return;
             }
-
             this.deselectCurrentNode();
-            this.currentComponentNode = node;
+            this.bindCurrentNode(node);
             var clsList = this.currentComponentNode['classList'];
             if (clsList) {
                 clsList.add('jdebug-inspector-selected');
             }
+        }
+
+        private unbindCurrentNode() {
+            if (this.currentComponentNode) {
+                this.currentComponentNode.removeEventListener('click', this.onComponentClickHandler);
+                this.currentComponentNode = null;
+            }
+        }
+
+        private bindCurrentNode(node:Node) {
+            this.currentComponentNode = node;
+            this.currentComponentNode.addEventListener('click', this.onComponentClickHandler);
         }
 
         private mapToComponentInfo(def:jasper.core.IHtmlComponentDefinition):ComponentInfo {

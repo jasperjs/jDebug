@@ -13,4 +13,7 @@
 ///<reference path="JDebugComponentInterceptor.ts" />
 ///<reference path="JDebugScriptManager.ts" />
 ///<reference path="JDebugStylesManager.ts" />
+
+///<reference path="JDebugUi.ts" />
+
 ///<reference path="JDebug.ts" />
