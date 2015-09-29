@@ -12,3 +12,6 @@ test/**/*.js
 test/**/*.js.map
 
 lib
+dist
+src/**/*.js.map
+src/**/*.js
