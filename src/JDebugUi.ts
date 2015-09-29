@@ -12,13 +12,32 @@ module jDebug {
                 name: 'jdebugManagePanel',
                 ctrl: jDebug.JDebugManagePanel,
                 template: `
-                    <div ng-if="vm.settings.enabled">
-                        <input ng-checked="vm.settings.styles" ng-click="vm.toggleStyles()" type="checkbox" />Styles
-                        <input ng-checked="vm.settings.ctrls" ng-click="vm.toggleCtrls()" type="checkbox" />Ctrls
-                        <input ng-checked="vm.settings.templates" ng-click="vm.toggleTemplates()" type="checkbox" />Templates
-                        <input ng-checked="vm.inspectorMode" ng-click="vm.toggleInspector()" type="checkbox" />Inspector
+                    <div ng-if="vm.settings.enabled" class="jdebug-panel">
 
-                        <button ng-click="vm.disable()">Close</button>
+                        <div class="jdebug-panel__drag"></div>
+                        <div class="jdebug-panel__buttons-wrapper">
+                            <label class="jdebug-panel__button">
+                                <input ng-checked="vm.settings.styles" ng-click="vm.toggleStyles()" type="checkbox" />
+                                <span>CSS</span>
+                            </label>
+
+                            <label class="jdebug-panel__button">
+                                <input ng-checked="vm.settings.ctrls" ng-click="vm.toggleCtrls()" type="checkbox" />
+                                <span>JS</span>
+                            </label>
+
+                            <label class="jdebug-panel__button">
+                                <input ng-checked="vm.settings.templates" ng-click="vm.toggleTemplates()" type="checkbox" />
+                                <span>HTML</span>
+                            </label>
+
+                            <label class="jdebug-panel__button">
+                                <input ng-checked="vm.inspectorMode" ng-click="vm.toggleInspector()" type="checkbox" />
+                                <span>Inspect</span>
+                            </label>
+                        </div>
+
+
                     </div>
                 `
             });
