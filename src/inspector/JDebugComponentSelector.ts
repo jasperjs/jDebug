@@ -1,11 +1,17 @@
 module jDebug.inspector {
     export class JDebugComponentSelector {
 
-        selectorNode:HTMLElement;
+        selectorNode:HTMLDivElement;
+        selectorLabel:HTMLDivElement;
 
         constructor() {
             this.selectorNode = document.createElement('div');
             this.selectorNode.classList.add('jdebug-inspector-selector');
+
+            this.selectorLabel = document.createElement('div');
+            this.selectorLabel.classList.add('jdebug-inspector-selector-label');
+            this.selectorNode.appendChild(this.selectorLabel);
+
             this.disable();
             document.body.appendChild(this.selectorNode);
         }
@@ -16,6 +22,8 @@ module jDebug.inspector {
             this.selectorNode.style.top = rect.top + 'px';
             this.selectorNode.style.height = (rect.bottom - rect.top) + 'px';
             this.selectorNode.style.width = (rect.right - rect.left) + 'px';
+
+            this.selectorLabel.innerHTML = componentNode.tagName;
 
             this.enable();
         }

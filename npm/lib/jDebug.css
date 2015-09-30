@@ -2,7 +2,20 @@
     position: absolute;
     pointer-events: none;
     border: 2px solid #5BA4FF;
-    background: rgba(170, 212, 255, 0.5);;
+    background: rgba(170, 212, 255, 0.5);
+    z-index: 10000;
+}
+
+.jdebug-inspector-selector-label{
+    display:inline-block;
+    background: #FFFFA7;
+    text-transform: lowercase;
+    font-size: 12px;
+    font-family: Arial;
+    color: #CE2525;
+    padding: 1px 3px;
+    position: relative;
+    top: -20px;
 }
 
 .jdebug-inspector-hover{

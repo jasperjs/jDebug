@@ -56,7 +56,7 @@ module jDebug.inspector {
             var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
             console.log(info.component);
 
-            
+
 
             e.preventDefault();
             e.stopPropagation();
