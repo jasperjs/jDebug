@@ -9,7 +9,17 @@ module jDebug.inspector {
 
         private onComponentClickHandler = (e)=>this.onComponentClick(e);
 
+        private selector:JDebugComponentSelector = new JDebugComponentSelector();
+
+        private ignoreComponents = ['jdebugManagePanel'];
+
         addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
+            for (var i = 0; i < this.ignoreComponents.length; i++) {
+                var ignoreComponent = this.ignoreComponents[i];
+                if (ignoreComponent === jasperComponent.name) {
+                    return;
+                }
+            }
             this.nodesMap.addComponent(node, this.mapToComponentInfo(jasperComponent));
         }
 
@@ -20,6 +30,7 @@ module jDebug.inspector {
         disable() {
             this.deselectCurrentNode();
             document.removeEventListener('mousemove', this.docMoveHandler);
+            this.selector.disable();
         }
 
         onDocumentMove(e) {
@@ -30,12 +41,11 @@ module jDebug.inspector {
             }
         }
 
-
         private deselectCurrentNode() {
             if (this.currentComponentNode) {
                 var clsList = this.currentComponentNode['classList'];
                 if (clsList) {
-                    clsList.remove('jdebug-inspector-selected');
+                    clsList.remove('jdebug-inspector-hover');
                 }
                 this.unbindCurrentNode();
                 this.currentComponentNode = null;
@@ -44,11 +54,12 @@ module jDebug.inspector {
 
         private onComponentClick(e) {
             var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
-            console.log(info);
+            console.log(info.component);
+
+            
 
             e.preventDefault();
             e.stopPropagation();
-
         }
 
         private selectNode(node:Node) {
@@ -57,9 +68,11 @@ module jDebug.inspector {
             }
             this.deselectCurrentNode();
             this.bindCurrentNode(node);
+
+            this.selector.moveTo(<Element>node);
             var clsList = this.currentComponentNode['classList'];
             if (clsList) {
-                clsList.add('jdebug-inspector-selected');
+                clsList.add('jdebug-inspector-hover');
             }
         }
 

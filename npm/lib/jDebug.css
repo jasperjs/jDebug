@@ -1,20 +1,12 @@
-.jdebug-inspector-selected {
-    position: relative;
-    cursor: pointer;
+.jdebug-inspector-selector{
+    position: absolute;
+    pointer-events: none;
+    border: 2px solid #5BA4FF;
+    background: rgba(170, 212, 255, 0.5);;
 }
 
-.jdebug-inspector-selected:after{
-    content: "test";
-    border: 3px solid #0078ff;
-    position: absolute;
-    top:0;
-    left:0;
-    bottom: 0;
-    right:0;
-    display: block;
-    pointer-events: none;
-    background: #79bcff;
-    opacity: .3;
+.jdebug-inspector-hover{
+    cursor: pointer;
 }
 
 
