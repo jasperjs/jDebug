@@ -44,6 +44,7 @@
     right: 5px;
     opacity: 0.5;
     user-select: none;
+    z-index: 10000;
     -webkit-user-select: none;
 }
 .jdebug-panel:hover {

@@ -100,14 +100,14 @@ module jDebug.inspector {
 
         private unbindCurrentNode() {
             if (this.currentComponentNode) {
-                this.currentComponentNode.removeEventListener('click', this.onComponentClickHandler);
+                this.currentComponentNode.removeEventListener('click', this.onComponentClickHandler, true);
                 this.currentComponentNode = null;
             }
         }
 
         private bindCurrentNode(node:Node) {
             this.currentComponentNode = node;
-            this.currentComponentNode.addEventListener('click', this.onComponentClickHandler);
+            this.currentComponentNode.addEventListener('click', this.onComponentClickHandler, true);
         }
 
         private mapToComponentInfo(def:jasper.core.IHtmlComponentDefinition):ComponentInfo {
