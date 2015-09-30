@@ -33,13 +33,12 @@ module jDebug {
     export class JDebugComponentInterceptor implements jasper.core.IDirectiveInterceptor<jasper.core.IHtmlComponentDefinition> {
         private definitions:DirectiveDefinition[] = [];
 
-        public inspector: inspector.JDebugInspector = new inspector.JDebugInspector();
-
         constructor(private templateCache:ng.ITemplateCacheService,
                     private compile:ng.ICompileService,
                     private http:ng.IHttpService,
                     private scripts:JDebugScriptManager,
-                    private registrar:jasper.core.HtmlComponentRegistrar) {
+                    private registrar:jasper.core.HtmlComponentRegistrar,
+                    private inspector: inspector.JDebugInspector) {
 
         }
 

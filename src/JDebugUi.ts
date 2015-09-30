@@ -42,7 +42,7 @@ module jDebug {
                 `
             });
 
-            var node = compile('<jdebug-manage-panel></jdebug-manage-panel>')(rootScope)
+            var node = compile('<jdebug-manage-panel></jdebug-manage-panel>')(rootScope.$new())
             document.body.appendChild(node[0]);
         }
 
@@ -94,9 +94,9 @@ module jDebug {
         toggleInspector() {
             this.inspectorMode = !this.inspectorMode;
             if (this.inspectorMode) {
-                jDebug.components.inspector.enable();
+                jDebug.currentInspector.enable();
             } else {
-                jDebug.components.inspector.disable();
+                jDebug.currentInspector.disable();
             }
         }
 

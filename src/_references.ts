@@ -7,6 +7,7 @@
 ///<reference path="inspector/ComponentInfo.ts" />
 ///<reference path="inspector/JDebugNodesMap.ts" />
 ///<reference path="inspector/JDebugComponentSelector.ts" />
+///<reference path="inspector/JDebugComponentInfoWindow.ts" />
 ///<reference path="inspector/JDebugInspector.ts" />
 
 ///<reference path="JDebugDirectiveInjector.ts" />

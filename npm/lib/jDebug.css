@@ -22,8 +22,18 @@
     cursor: pointer;
 }
 
+/* Component info window */
 
-/* Панель кнопок */
+.jdebug-component-info{
+    display: block;
+    position: absolute;
+    z-index: 10010;
+    background: white;
+    border: 1px solid;
+    width: 320px;
+}
+
+/* Manage panel */
 .jdebug-panel {
     border: 1px solid #DEDEDE;
     background-color: #f0f0f0;
@@ -40,7 +50,6 @@
     opacity: 1;
 }
 
-/* Таскалка */
 .jdebug-panel__drag {
     width: 13px;
     height: 24px;
@@ -54,14 +63,12 @@
     cursor: move;
 }
 
-/* Враппер кнопок */
 .jdebug-panel__buttons-wrapper {
     padding-left: 15px;
     font-size: 0;
     line-height: 0;
 }
 
-/* Кнопка */
 .jdebug-panel__button {
     position: relative;
     display: inline-block;

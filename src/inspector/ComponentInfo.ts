@@ -5,8 +5,12 @@ module jDebug.inspector {
          */
         path: string;
 
+        name: string;
+
         templateFile: string;
 
-        ctrl: string;
+        properties: string[];
+
+        events: string[];
     }
 }

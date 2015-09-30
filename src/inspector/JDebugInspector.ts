@@ -9,9 +9,19 @@ module jDebug.inspector {
 
         private onComponentClickHandler = (e)=>this.onComponentClick(e);
 
+        // ui components:
         private selector:JDebugComponentSelector = new JDebugComponentSelector();
+        private componentInfoWindow:JDebugComponentInfoWindow;
 
-        private ignoreComponents = ['jdebugManagePanel'];
+        private ignoreComponents = ['jdebugManagePanel', 'jdebugComponentInfo'];
+
+        // current has focus (user clicked on them)
+        private focused:boolean;
+
+        constructor(compile:ng.ICompileService, rootScope:ng.IScope, components:jasper.core.HtmlComponentRegistrar) {
+            this.componentInfoWindow = new JDebugComponentInfoWindow(rootScope, compile, components);
+            this.componentInfoWindow.hide();
+        }
 
         addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
             for (var i = 0; i < this.ignoreComponents.length; i++) {
@@ -31,9 +41,14 @@ module jDebug.inspector {
             this.deselectCurrentNode();
             document.removeEventListener('mousemove', this.docMoveHandler);
             this.selector.disable();
+            this.componentInfoWindow.hide();
+            this.focused = false;
         }
 
         onDocumentMove(e) {
+            if (this.focused) {
+                return;
+            }
             var target:Node = e.target;
             var info = this.nodesMap.findComponentForNode(target);
             if (info) {
@@ -53,10 +68,17 @@ module jDebug.inspector {
         }
 
         private onComponentClick(e) {
-            var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
-            console.log(info.component);
 
-
+            if (this.focused) {
+                this.focused = false;
+                this.componentInfoWindow.hide();
+            } else {
+                var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
+                if (info) {
+                    this.focused = true;
+                    this.componentInfoWindow.show(info.component, <Element>info.node);
+                }
+            }
 
             e.preventDefault();
             e.stopPropagation();
@@ -91,8 +113,10 @@ module jDebug.inspector {
         private mapToComponentInfo(def:jasper.core.IHtmlComponentDefinition):ComponentInfo {
             var info = new ComponentInfo();
             info.path = def.jDebug ? def.jDebug.path : '';
-            info.templateFile = def.templateUrl;//TODO pass templateFile to jDebug object
-            info.ctrl = def.ctrl || def.ctor;
+            info.templateFile = def.templateUrl;
+            info.properties = def.properties;
+            info.events = def.events;
+            info.name = def.name;
             return info;
         }
     }

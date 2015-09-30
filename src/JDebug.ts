@@ -6,6 +6,7 @@ module jDebug {
     export var styles:JDebugStylesManager;
     export var directiveIdKey = 'jdebug-id';
     export var repeatDirectives = ['ng-repeat'];
+    export var currentInspector: inspector.JDebugInspector;
 
     export var dispatcher: JDebugEventDispatcher;
 
@@ -46,7 +47,10 @@ module jDebug {
         var jasperComponentRegistrar = <jasper.core.HtmlComponentRegistrar>angularInjector.get('jasperComponent');
         services = <jasper.core.ServiceRegistrar>angularInjector.get('jasperService');
         animate = <ng.IAnimateService>angularInjector.get('$animate');
-        components = new JDebugComponentInterceptor($templateCache, $compile, $http, scripts, jasperComponentRegistrar);
+
+        currentInspector = new inspector.JDebugInspector($compile, $rootScope, jasperComponentRegistrar);
+
+        components = new JDebugComponentInterceptor($templateCache, $compile, $http, scripts, jasperComponentRegistrar, currentInspector);
 
         if (jasperComponentRegistrar.setInterceptor) {
             jasperComponentRegistrar.setInterceptor(components);
