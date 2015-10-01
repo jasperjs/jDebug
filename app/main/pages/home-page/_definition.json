@@ -1,4 +1,5 @@
 {
+  "attributes": "color t:text click:expr",
   "templateFile": "home-page.html",
   "type": "page",
   "route": "/",
