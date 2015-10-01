@@ -112,31 +112,69 @@ module jDebug.inspector {
         navigate:jasper.core.IEventEmitter;
 
         // props:
-        component:any;
+        component:ComponentInfo;
         show:boolean;
 
         //fields:
         properties:IJDebugComponentProperty[];
+        events:IJDebugComponentEvent[];
+
+        isLegacyApi:boolean;
 
         component_change() {
-            if (this.component && this.component.properties) {
-                this.properties = [];
-                for (var i = 0; i < this.component.properties.length; i++) {
-                    var propertyName = this.component.properties[i];
-                    var property:IJDebugComponentProperty = {
-                        propertyName: propertyName,
-                        propertyValue: null
-                    };
-                    if (this.component.ctrl) {
-                        var ctrlProperty = this.camelCaseTagName(property.propertyName);
-                        if (this.component.ctrl[ctrlProperty]) {
-                            property.propertyValue = JSON.stringify(this.component.ctrl[ctrlProperty]);
-                        }
+
+            if (this.component && (this.component.properties || this.component.events)) {
+                // properties
+                if (this.component.properties) {
+                    this.isLegacyApi = false;
+                    this.properties = [];
+                    for (var i = 0; i < this.component.properties.length; i++) {
+                        var propertyName = this.component.properties[i];
+                        var property:IJDebugComponentProperty = {
+                            propertyName: propertyName,
+                            propertyValue: this.getCtrlPropertyValue(propertyName)
+                        };
+                        this.properties.push(property);
                     }
-                    this.properties.push(property);
+                } else {
+                    this.properties = null;
                 }
-            }else{
-                this.properties = null;
+
+                if (this.component.events) {
+                    this.isLegacyApi = false;
+                    this.events = [];
+                    for (var i = 0; i < this.component.events.length; i++) {
+                        var eventName = this.component.events[i];
+                        var event:IJDebugComponentEvent = {
+                            eventName: 'on-' + eventName
+                        };
+                        this.events.push(event);
+                    }
+                } else {
+                    this.events = null;
+                }
+            } else if (this.component && this.component.attributes) {
+                //legacy attributes
+                this.isLegacyApi = true;
+                this.properties = [];
+                this.events = [];
+                for (var i = 0; i < this.component.attributes.length; i++) {
+                    var attrBinding = this.component.attributes[i];
+                    switch (attrBinding.type) {
+                        case 'expr':
+                        case 'event':
+                            this.events.push({
+                                eventName: this.camelCaseTagName(attrBinding.name)
+                            });
+                            break;
+                        default:
+                            this.properties.push({
+                                propertyName: this.camelCaseTagName(attrBinding.name),
+                                propertyValue: this.getCtrlPropertyValue(attrBinding.name)
+                            });
+                            break;
+                    }
+                }
             }
         }
 
@@ -156,6 +194,17 @@ module jDebug.inspector {
             this.close.next();
         }
 
+        private getCtrlPropertyValue(attrName:string):string {
+            if (this.component.ctrl) {
+                var ctrlProperty = this.camelCaseTagName(attrName);
+                if (this.component.ctrl[ctrlProperty]) {
+                    var val = JSON.stringify(this.component.ctrl[ctrlProperty]);
+                    return val.length > 150 ? val.substr(0, 150) + '...' : val;
+                }
+            }
+            return null;
+        }
+
         private camelCase(name:string):string {
             var regex = /[A-Z]/g;
             return name.replace(regex, function (letter, pos) {
@@ -163,7 +212,7 @@ module jDebug.inspector {
             });
         }
 
-        private camelCaseTagName(tagName:string):string {
+        private  camelCaseTagName(tagName:string):string {
             if (tagName.indexOf('-') < 0) {
                 return this.camelCase(tagName);
             }
@@ -174,17 +223,22 @@ module jDebug.inspector {
         }
     }
 
-    interface IJDebugComponentInfoScope extends ng.IScope {
-        show: boolean;
-        component: ComponentInfo;
 
-        onParent: Function;
-        onNavigate: Function;
-        onClose: Function;
+    interface IJDebugComponentInfoScope extends ng.IScope {
+        show:boolean;
+        component:ComponentInfo;
+
+        onParent:Function;
+        onNavigate:Function;
+        onClose:Function;
     }
 
     export interface IJDebugComponentProperty {
         propertyName: string;
         propertyValue: string;
+    }
+
+    export interface IJDebugComponentEvent {
+        eventName: string;
     }
 }

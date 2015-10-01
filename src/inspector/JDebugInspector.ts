@@ -165,6 +165,7 @@ module jDebug.inspector {
             info.ctrl = ctrlInstance;
             info.events = def.events;
             info.name = def.name;
+            info.attributes = def.attributes;
             return info;
         }
     }

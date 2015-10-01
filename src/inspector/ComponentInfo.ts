@@ -11,6 +11,8 @@ module jDebug.inspector {
 
         properties: string[];
 
+        attributes: jasper.core.IAttributeBinding[];
+
         events: string[];
 
         // controller instance of this component
