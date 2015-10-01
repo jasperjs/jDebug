@@ -2,24 +2,15 @@
     position: absolute;
     pointer-events: none;
     border: 1px solid #97C2F7;
-    /* z-index: 10000000; */
+    z-index: 10000;
     box-sizing: border-box;
+    background: rgba(222, 237, 255, 0.33);
 }
-.jdebug-inspector-selector:before {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(222, 237, 255);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
+
 
 .jdebug-inspector-selector-label {
     display:inline-block;
-    /* text-transform: lowercase; */
+    line-height: 1;
     font-size: 14px;
     font-family: Arial;
     color: #505050;
@@ -31,15 +22,7 @@
     border-bottom: none;
     left: -1px;
     box-sizing: border-box;
-    /* z-index: 10000000000000; */
-}
-.jdebug-inspector-selector-label:after {
-    /* content: ""; */
-    /* display: block; */
-    /* height: 1px; */
-    /* position: absolute; */
-    /* width: 100%; */
-    /* background-color: red; */
+
 }
 
 .jdebug-inspector-hover{
