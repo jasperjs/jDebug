@@ -37,14 +37,14 @@ module jDebug.inspector {
             });
         }
 
-        addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
+        addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition, ctrlInstance: any) {
             for (var i = 0; i < this.ignoreComponents.length; i++) {
                 var ignoreComponent = this.ignoreComponents[i];
                 if (ignoreComponent === jasperComponent.name) {
                     return;
                 }
             }
-            this.nodesMap.addComponent(node, this.mapToComponentInfo(jasperComponent));
+            this.nodesMap.addComponent(node, this.mapToComponentInfo(jasperComponent, ctrlInstance));
         }
 
         enable() {
@@ -157,11 +157,12 @@ module jDebug.inspector {
             this.currentComponentNode.addEventListener('click', this.onComponentClickHandler, true);
         }
 
-        private mapToComponentInfo(def:jasper.core.IHtmlComponentDefinition):ComponentInfo {
+        private mapToComponentInfo(def:jasper.core.IHtmlComponentDefinition, ctrlInstance: any):ComponentInfo {
             var info = new ComponentInfo();
             info.path = def.jDebug ? def.jDebug.path : '';
             info.templateFile = def.templateUrl;
             info.properties = def.properties;
+            info.ctrl = ctrlInstance;
             info.events = def.events;
             info.name = def.name;
             return info;

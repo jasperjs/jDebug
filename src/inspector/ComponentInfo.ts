@@ -12,5 +12,8 @@ module jDebug.inspector {
         properties: string[];
 
         events: string[];
+
+        // controller instance of this component
+        ctrl: any;
     }
 }

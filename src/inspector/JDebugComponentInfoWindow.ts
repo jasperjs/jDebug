@@ -11,14 +11,16 @@ module jDebug.inspector {
             components.register({
                 name: 'jdebugComponentInfo',
                 ctrl: JDebugComponentInfo,
-                properties: ['component','show'],
+                properties: ['component', 'show'],
                 events: ['parent', 'close', 'navigate'],
                 template: `
                     <div class="jdebug-component-info" ng-if="vm.show">
                         <p><b>Component:</b> {{vm.component.name}}</p>
-                        <p ng-if="vm.component.properties">
+                        <p ng-if="vm.properties">
                             <b>Properties:</b>
-                            <span ng-repeat="prop in vm.component.properties">{{::prop}}</span>
+                            <ul>
+                                <li ng-repeat="prop in vm.properties"><b>{{::prop.propertyName}}</b>: {{::prop.propertyValue || 'not specified'}}</li>
+                            </ul>
                         </p>
                         <p ng-if="vm.component.events">
                             <b>Events:</b>
@@ -62,7 +64,6 @@ module jDebug.inspector {
                 top = top - diffY;
             }
 
-
             windowNode.style.top = top + 'px';
             windowNode.style.left = left + 'px';
         }
@@ -85,8 +86,8 @@ module jDebug.inspector {
             this.infoScope.onNavigate = cb;
         }
 
-        private safeApply(){
-            if(!this.infoScope.$$phase){
+        private safeApply() {
+            if (!this.infoScope.$$phase) {
                 this.infoScope.$digest();
             }
         }
@@ -96,29 +97,71 @@ module jDebug.inspector {
      *
      */
     export class JDebugComponentInfo {
+        //events:
         parent:jasper.core.IEventEmitter;
         close:jasper.core.IEventEmitter;
         navigate:jasper.core.IEventEmitter;
 
-
+        // props:
         component:any;
-
         show:boolean;
+
+        //fields:
+        properties:IJDebugComponentProperty[];
+
+        component_change() {
+            if (this.component && this.component.properties) {
+                this.properties = [];
+                for (var i = 0; i < this.component.properties.length; i++) {
+                    var propertyName = this.component.properties[i];
+                    var property:IJDebugComponentProperty = {
+                        propertyName: propertyName,
+                        propertyValue: null
+                    };
+                    if (this.component.ctrl) {
+                        var ctrlProperty = this.camelCaseTagName(property.propertyName);
+                        if (this.component.ctrl[ctrlProperty]) {
+                            property.propertyValue = JSON.stringify(this.component.ctrl[ctrlProperty]);
+                        }
+                    }
+                    this.properties.push(property);
+                }
+            }else{
+                this.properties = null;
+            }
+        }
 
         navigateToParent() {
             this.parent.next();
         }
 
-        navigateToDef(){
+        navigateToDef() {
             this.navigate.next(this.component.path);
         }
 
-        navigateToTemplate(){
+        navigateToTemplate() {
             this.navigate.next(this.component.templateFile);
         }
 
-        closeWindow(){
+        closeWindow() {
             this.close.next();
+        }
+
+        private camelCase(name:string):string {
+            var regex = /[A-Z]/g;
+            return name.replace(regex, function (letter, pos) {
+                return pos ? letter : letter.toLowerCase();
+            });
+        }
+
+        private camelCaseTagName(tagName:string):string {
+            if (tagName.indexOf('-') < 0) {
+                return this.camelCase(tagName);
+            }
+
+            return tagName.replace(/\-(\w)/g, function (match, letter) {
+                return letter.toUpperCase();
+            });
         }
     }
 
@@ -129,5 +172,10 @@ module jDebug.inspector {
         onParent: Function;
         onNavigate: Function;
         onClose: Function;
+    }
+
+    export interface IJDebugComponentProperty {
+        propertyName: string;
+        propertyValue: string;
     }
 }

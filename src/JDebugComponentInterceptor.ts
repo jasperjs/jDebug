@@ -84,7 +84,7 @@ module jDebug {
 
             definition.addInstance(instance);
 
-            this.inspector.addComponentNode(iElement[0], component);
+            this.inspector.addComponentNode(iElement[0], component, scope['vm']);
         }
 
         /**
