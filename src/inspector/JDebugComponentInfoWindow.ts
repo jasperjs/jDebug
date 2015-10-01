@@ -47,10 +47,11 @@ module jDebug.inspector {
             this.infoScope.show = true;
             this.infoScope.component = componentInfo;
             this.safeApply();
+            var windowNode = <HTMLElement>this.infoNode.getElementsByClassName('jdebug-component-info')[0];
 
             var rect = element.getBoundingClientRect();
 
-            var infoWindowWIdth = 320, infoWindowHeight = 250;
+            var infoWindowWIdth = windowNode.clientWidth + 20 /* padding-left*/, infoWindowHeight = windowNode.clientHeight + 20 /*padding bottom*/;
 
             var left = rect.left + window.pageXOffset, top = rect.top + window.pageYOffset;
             var diffX = rect.left + infoWindowWIdth - window.innerWidth, diffY = rect.top + infoWindowHeight - window.innerHeight;
@@ -61,7 +62,7 @@ module jDebug.inspector {
                 top = top - diffY;
             }
 
-            var windowNode = <HTMLElement>this.infoNode.getElementsByClassName('jdebug-component-info')[0];
+
             windowNode.style.top = top + 'px';
             windowNode.style.left = left + 'px';
         }

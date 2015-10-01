@@ -65,7 +65,18 @@ module jDebug.inspector {
         }
 
         private selectParentComponent(){
-            console.log('to parent');
+            if(!this.focused){
+                return;
+            }
+            var parent = this.focusedNode.parentNode;
+            if(!parent){
+                return;
+            }
+            var info = this.nodesMap.findComponentForNode(parent);
+            if (info) {
+                this.selectNode(info.node);
+                this.focusCurrentNode();
+            }
         }
 
         private navigateTo(path: string){
