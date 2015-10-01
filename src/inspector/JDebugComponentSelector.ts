@@ -23,7 +23,7 @@ module jDebug.inspector {
             this.selectorNode.style.height = (rect.bottom - rect.top) + 'px';
             this.selectorNode.style.width = (rect.right - rect.left) + 'px';
 
-            this.selectorLabel.innerHTML = componentInfo.name;
+            this.selectorLabel.innerHTML = this.shakeCase(componentInfo.name);
 
             this.enable();
         }
@@ -39,6 +39,15 @@ module jDebug.inspector {
         destroy() {
             this.selectorNode.remove();
             this.selectorNode = null;
+        }
+
+
+        private shakeCase(name) : string{
+            var SNAKE_CASE_REGEXP = /[A-Z]/g;
+            var separator = '-';
+            return name.replace(SNAKE_CASE_REGEXP, function (letter, pos) {
+                return (pos ? separator : '') + letter.toLowerCase();
+            });
         }
 
         private calcRect(componentNode:Element):IRect {

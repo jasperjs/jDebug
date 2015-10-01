@@ -22,13 +22,19 @@ module jDebug.inspector {
         constructor(compile:ng.ICompileService,
                     rootScope:ng.IScope,
                     components:jasper.core.HtmlComponentRegistrar,
-                    private dispatcher: JDebugEventDispatcher) {
+                    private dispatcher:JDebugEventDispatcher) {
             this.componentInfoWindow = new JDebugComponentInfoWindow(rootScope, compile, components);
             this.componentInfoWindow.hide();
 
-            this.componentInfoWindow.onParent(()=>{ this.selectParentComponent(); });
-            this.componentInfoWindow.onClose(()=>{ this.clearFocus(); });
-            this.componentInfoWindow.onNavigate((path)=>{ this.navigateTo(path); });
+            this.componentInfoWindow.onParent(()=> {
+                this.selectParentComponent();
+            });
+            this.componentInfoWindow.onClose(()=> {
+                this.clearFocus();
+            });
+            this.componentInfoWindow.onNavigate((path)=> {
+                this.navigateTo(path);
+            });
         }
 
         addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
@@ -64,12 +70,12 @@ module jDebug.inspector {
             }
         }
 
-        private selectParentComponent(){
-            if(!this.focused){
+        private selectParentComponent() {
+            if (!this.focused) {
                 return;
             }
             var parent = this.focusedNode.parentNode;
-            if(!parent){
+            if (!parent) {
                 return;
             }
             var info = this.nodesMap.findComponentForNode(parent);
@@ -79,7 +85,8 @@ module jDebug.inspector {
             }
         }
 
-        private navigateTo(path: string){
+
+        private navigateTo(path:string) {
             this.dispatcher.send({
                 type: 'ide_open',
                 data: path
@@ -109,13 +116,13 @@ module jDebug.inspector {
             e.stopPropagation();
         }
 
-        private clearFocus(){
+        private clearFocus() {
             this.focused = false;
             this.focusedNode = null;
             this.componentInfoWindow.hide();
         }
 
-        private focusHoverNode(){
+        private focusHoverNode() {
             var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
             if (info) {
                 this.focused = true;
@@ -124,7 +131,7 @@ module jDebug.inspector {
             }
         }
 
-        private hoverComponent(node:Node, info: ComponentInfo) {
+        private hoverComponent(node:Node, info:ComponentInfo) {
             if (this.currentComponentNode === node) {
                 return;
             }
