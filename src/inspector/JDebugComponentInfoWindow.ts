@@ -15,28 +15,36 @@ module jDebug.inspector {
                 events: ['parent', 'close', 'navigate'],
                 template: `
                     <div class="jdebug-component-info" ng-if="vm.show">
-                        <p><b>Component:</b> {{vm.component.name}}</p>
-                        <p ng-if="vm.properties">
-                            <b>Properties:</b>
-                            <ul>
-                                <li ng-repeat="prop in vm.properties"><b>{{::prop.propertyName}}</b>: {{::prop.propertyValue || 'not specified'}}</li>
-                            </ul>
-                        </p>
-                        <p ng-if="vm.component.events">
-                            <b>Events:</b>
-                            <span ng-repeat="evnt in vm.component.events">{{::evnt}}</span>
-                        </p>
-                        <p ng-if="vm.component.templateFile">
-                            <b>Template file:</b> <a href="" ng-click="vm.navigateToTemplate()">{{vm.component.templateFile}}</a>
-                        </p>
-                        <p ng-if="vm.component.path">
-                            <b>Definition:</b>
-                            <a href="" ng-click="vm.navigateToDef()">{{vm.component.path}}</a>
-                        </p>
-                        <p>
-                            <a href="" ng-click="vm.navigateToParent()">Parent component</a>
-                        </p>
-                        <button type="button" ng-click="vm.closeWindow()">close</button>
+                        <button type="button" class="jdebug-component-info__close-button" ng-click="vm.closeWindow()">
+                            <svg><g> <path d="M21,2.28l-9.14,9.15l-9.14,-9.15l-0.72,0.72l9.15,9.14l-9.15,9.14l0.72,0.72l9.14,-9.15l9.14,9.15l0.72,-0.72l-9.15,-9.14l9.15,-9.14l-0.72,-0.72Z" style="fill-rule:evenodd;"></path> </g></svg>
+                        </button>
+
+                        <div class="jdebug-component-info__title-wrapper">
+                            <h4 class="jdebug-component-info__title">{{vm.component.name}}</h4>
+                        </div>
+
+                        <div class="jdebug-component-info__body">
+                            <p ng-if="vm.component.properties">
+                                <b>Properties:</b>
+                                <ul>
+                                    <li ng-repeat="prop in vm.properties"><b>{{::prop.propertyName}}</b>: {{::prop.propertyValue || 'not specified'}}</li>
+                                </ul>
+                            </p>
+                            <p ng-if="vm.component.events">
+                                <b>Events:</b>
+                                <span ng-repeat="evnt in vm.component.events">{{::evnt}}</span>
+                            </p>
+                            <p ng-if="vm.component.templateFile">
+                                <b>Template file:</b> <a href="" ng-click="vm.navigateToTemplate()">{{vm.component.templateFile}}</a>
+                            </p>
+                            <p ng-if="vm.component.path">
+                                <b>Definition:</b>
+                                <a href="" ng-click="vm.navigateToDef()">{{vm.component.path}}</a>
+                            </p>
+                            <p>
+                                <a href="" ng-click="vm.navigateToParent()">Parent component</a>
+                            </p>
+                        </div>
                     </div>
                 `
             });
@@ -63,6 +71,7 @@ module jDebug.inspector {
             if (diffY > 0) {
                 top = top - diffY;
             }
+
 
             windowNode.style.top = top + 'px';
             windowNode.style.left = left + 'px';

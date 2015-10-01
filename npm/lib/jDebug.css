@@ -1,21 +1,45 @@
 .jdebug-inspector-selector{
     position: absolute;
     pointer-events: none;
-    border: 2px solid #5BA4FF;
-    background: rgba(170, 212, 255, 0.5);
-    z-index: 10000;
+    border: 1px solid #97C2F7;
+    /* z-index: 10000000; */
+    box-sizing: border-box;
+}
+.jdebug-inspector-selector:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(222, 237, 255);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
-.jdebug-inspector-selector-label{
+.jdebug-inspector-selector-label {
     display:inline-block;
-    background: #FFFFA7;
-    text-transform: lowercase;
-    font-size: 12px;
+    /* text-transform: lowercase; */
+    font-size: 14px;
     font-family: Arial;
-    color: #CE2525;
-    padding: 1px 3px;
-    position: relative;
-    top: -20px;
+    color: #505050;
+    padding: 4px 9px;
+    position: absolute;
+    top: -25px;
+    border: 1px solid #97C2F7;
+    background: rgb(222, 237, 255);
+    border-bottom: none;
+    left: -1px;
+    box-sizing: border-box;
+    /* z-index: 10000000000000; */
+}
+.jdebug-inspector-selector-label:after {
+    /* content: ""; */
+    /* display: block; */
+    /* height: 1px; */
+    /* position: absolute; */
+    /* width: 100%; */
+    /* background-color: red; */
 }
 
 .jdebug-inspector-hover{
@@ -29,8 +53,18 @@
     position: absolute;
     z-index: 10010;
     background: white;
-    border: 1px solid;
     width: 320px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    background-clip: padding-box;
+    box-sizing: border-box;
+    font-family: "Open Sans",san-serif;
+    /* min-height: 100%; */
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #333;
+    padding: 5px;
 }
 
 /* Manage panel */
@@ -136,3 +170,73 @@
 .jdebug-panel__button input[type="checkbox"]:checked + span:after {
 
 left: 8px;width: 8px;top: 13px;}
+
+
+
+.jdebug-component-info__close-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1;
+    padding: 5px;
+    line-height: 0;
+    font-size: 25px;
+    opacity: .4;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    margin: 0;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    overflow: visible;
+}
+.jdebug-component-info__close-button:hover {
+    opacity: 1;
+}
+
+.jdebug-component-info__close-button svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+.jdebug-component-info__title-wrapper {
+    display: block;
+    padding: 0 10px;
+}
+.jdebug-component-info__title-wrapper:after {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #d6d6d6;
+    margin: 0 -3px;
+}
+.jdebug-component-info__title {
+position: relative;     color: #333;     font-weight: 500;     line-height: 1.3;     margin-bottom: 15px;     overflow: hidden;     text-overflow: ellipsis;font-size: 19px;margin: 5px 0 10px;     padding: 0;/* text-align: right; *//* margin-right: 29px; */
+}
+
+.jdebug-component-info__body {
+    display: block;
+    padding: 10px 7px 7px;
+}
+
+.jdebug-component-info__body p {
+    margin: 0;
+    padding: 0;
+}
+.jdebug-component-info__body a,
+.jdebug-component-info__body a:visited {
+    color: #3187dd;
+}
+.jdebug-component-info__body p + p {
+    margin-top: 12px;
+}
+.jdebug-component-info__body span {
+    /*  */
+}
+.jdebug-component-info__body b {
+    /*  */
+}
