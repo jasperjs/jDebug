@@ -20,7 +20,7 @@ module jDebug.inspector {
                         </button>
                         <p style="color:red" ng-if="vm.isLegacyApi">Used legacy attributes bindings!</p>
                         <div class="jdebug-component-info__title-wrapper">
-                            <h4 class="jdebug-component-info__title">{{vm.component.name}}</h4>
+                            <h4 class="jdebug-component-info__title">{{vm.componentTagname}}</h4>
                         </div>
 
                         <div class="jdebug-component-info__body">
@@ -34,15 +34,10 @@ module jDebug.inspector {
                                 <b>Events:</b>
                                 <span ng-repeat="evnt in vm.events">{{::evnt.eventName}}&nbsp;</span>
                             </p>
-                            <p ng-if="vm.component.templateFile">
-                                <b>Template file:</b> <a href="" ng-click="vm.navigateToTemplate()">{{vm.component.templateFile}}</a>
-                            </p>
-                            <p ng-if="vm.component.path">
-                                <b>Definition:</b>
-                                <a href="" ng-click="vm.navigateToDef()">{{vm.component.path}}</a>
-                            </p>
                             <p>
-                                <a href="" ng-click="vm.navigateToParent()">Parent component</a>
+                                <a ng-if="vm.component.templateFile" href="" title="{{vm.component.templateFile}}" ng-click="vm.navigateToTemplate()">View template</a>
+                                <a ng-if="vm.component.path" href="" title="{{vm.component.path}}" ng-click="vm.navigateToDef()">View definition</a>
+                                <a href="" ng-click="vm.navigateToParent()">To parent component</a>
                             </p>
                         </div>
                     </div>
@@ -120,59 +115,63 @@ module jDebug.inspector {
         events:IJDebugComponentEvent[];
 
         isLegacyApi:boolean;
+        componentTagname: string;
 
         component_change() {
+            if (this.component) {
+                this.componentTagname = this.shakeCase(this.component.name);
 
-            if (this.component && (this.component.properties || this.component.events)) {
-                // properties
-                if (this.component.properties) {
-                    this.isLegacyApi = false;
+                if (this.component.properties || this.component.events) {
+                    // properties
+                    if (this.component.properties) {
+                        this.isLegacyApi = false;
+                        this.properties = [];
+                        for (var i = 0; i < this.component.properties.length; i++) {
+                            var propertyName = this.component.properties[i];
+                            var property:IJDebugComponentProperty = {
+                                propertyName: propertyName,
+                                propertyValue: this.getCtrlPropertyValue(propertyName)
+                            };
+                            this.properties.push(property);
+                        }
+                    } else {
+                        this.properties = null;
+                    }
+
+                    if (this.component.events) {
+                        this.isLegacyApi = false;
+                        this.events = [];
+                        for (var i = 0; i < this.component.events.length; i++) {
+                            var eventName = this.component.events[i];
+                            var event:IJDebugComponentEvent = {
+                                eventName: 'on-' + eventName
+                            };
+                            this.events.push(event);
+                        }
+                    } else {
+                        this.events = null;
+                    }
+                } else if (this.component.attributes) {
+                    //legacy attributes
+                    this.isLegacyApi = true;
                     this.properties = [];
-                    for (var i = 0; i < this.component.properties.length; i++) {
-                        var propertyName = this.component.properties[i];
-                        var property:IJDebugComponentProperty = {
-                            propertyName: propertyName,
-                            propertyValue: this.getCtrlPropertyValue(propertyName)
-                        };
-                        this.properties.push(property);
-                    }
-                } else {
-                    this.properties = null;
-                }
-
-                if (this.component.events) {
-                    this.isLegacyApi = false;
                     this.events = [];
-                    for (var i = 0; i < this.component.events.length; i++) {
-                        var eventName = this.component.events[i];
-                        var event:IJDebugComponentEvent = {
-                            eventName: 'on-' + eventName
-                        };
-                        this.events.push(event);
-                    }
-                } else {
-                    this.events = null;
-                }
-            } else if (this.component && this.component.attributes) {
-                //legacy attributes
-                this.isLegacyApi = true;
-                this.properties = [];
-                this.events = [];
-                for (var i = 0; i < this.component.attributes.length; i++) {
-                    var attrBinding = this.component.attributes[i];
-                    switch (attrBinding.type) {
-                        case 'expr':
-                        case 'event':
-                            this.events.push({
-                                eventName: this.camelCaseTagName(attrBinding.name)
-                            });
-                            break;
-                        default:
-                            this.properties.push({
-                                propertyName: this.camelCaseTagName(attrBinding.name),
-                                propertyValue: this.getCtrlPropertyValue(attrBinding.name)
-                            });
-                            break;
+                    for (var i = 0; i < this.component.attributes.length; i++) {
+                        var attrBinding = this.component.attributes[i];
+                        switch (attrBinding.type) {
+                            case 'expr':
+                            case 'event':
+                                this.events.push({
+                                    eventName: attrBinding.name
+                                });
+                                break;
+                            default:
+                                this.properties.push({
+                                    propertyName: attrBinding.name,
+                                    propertyValue: this.getCtrlPropertyValue(attrBinding.name)
+                                });
+                                break;
+                        }
                     }
                 }
             }
@@ -198,7 +197,7 @@ module jDebug.inspector {
             if (this.component.ctrl) {
                 var ctrlProperty = this.camelCaseTagName(attrName);
                 if (this.component.ctrl[ctrlProperty]) {
-                    var val = JSON.stringify(this.component.ctrl[ctrlProperty]);
+                    var val = JSON.stringify(this.component.ctrl[ctrlProperty], null, 2);
                     return val.length > 150 ? val.substr(0, 150) + '...' : val;
                 }
             }
@@ -219,6 +218,14 @@ module jDebug.inspector {
 
             return tagName.replace(/\-(\w)/g, function (match, letter) {
                 return letter.toUpperCase();
+            });
+        }
+
+        private shakeCase(name):string {
+            var SNAKE_CASE_REGEXP = /[A-Z]/g;
+            var separator = '-';
+            return name.replace(SNAKE_CASE_REGEXP, function (letter, pos) {
+                return (pos ? separator : '') + letter.toLowerCase();
             });
         }
     }
