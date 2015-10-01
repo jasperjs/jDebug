@@ -5,14 +5,20 @@ module jDebug {
         data: any;
     }
 
+    export interface IJDebugCommand {
+        type: string;
+        data: any;
+    }
+
     export class JDebugEventDispatcher {
 
         wsConnectionString:string;
 
-        stylesEnabled: boolean = true;
-        ctrlsEnabled: boolean = true;
-        templatesEnabled: boolean = true;
+        stylesEnabled:boolean = true;
+        ctrlsEnabled:boolean = true;
+        templatesEnabled:boolean = true;
 
+        isConnected:boolean;
 
         private ws:WebSocket;
 
@@ -30,6 +36,7 @@ module jDebug {
             }
             this.ws = new WebSocket(this.wsConnectionString);
             this.ws.onclose = ()=> {
+                this.isConnected = false;
                 setTimeout(this.connect.bind(this), 5000);
             };
             this.ws.onmessage = (event:MessageEvent)=> {
@@ -39,12 +46,25 @@ module jDebug {
             this.ws.onerror = ()=> {
                 console.warn('jDebug: ws connection error');
             };
+
+            this.ws.onopen = () => {
+                this.isConnected = true;
+            };
+        }
+
+        send(message: IJDebugCommand) {
+            if (!this.isConnected) {
+                console.warn('jDebug: not connected');
+                return;
+            }
+
+            this.ws.send(JSON.stringify(message));
         }
 
         private dispatch(message:IJDebugMessage) {
             switch (message.type) {
                 case 1: // template changed
-                    if(!this.templatesEnabled){
+                    if (!this.templatesEnabled) {
                         return;
                     }
                     jDebug.components.updateComponentTemplateUrl(message.data.component);
@@ -55,7 +75,7 @@ module jDebug {
                     }
                     break;
                 case 3: // ctrl changed
-                    if(!this.ctrlsEnabled){
+                    if (!this.ctrlsEnabled) {
                         return;
                     }
                     if (this.isTypeSupported(message.data.def.type)) {
@@ -63,7 +83,7 @@ module jDebug {
                     }
                     break;
                 case 4: // css changed
-                    if(!this.stylesEnabled){
+                    if (!this.stylesEnabled) {
                         return;
                     }
                     jDebug.styles.updateStyle(message.data);

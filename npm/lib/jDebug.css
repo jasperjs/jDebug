@@ -19,7 +19,7 @@
 }
 
 .jdebug-inspector-hover{
-    cursor: pointer;
+    cursor: pointer!important;
 }
 
 /* Component info window */
@@ -44,7 +44,7 @@
     right: 5px;
     opacity: 0.5;
     user-select: none;
-    z-index: 10000;
+    z-index: 10020;
     -webkit-user-select: none;
 }
 .jdebug-panel:hover {

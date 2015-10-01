@@ -48,8 +48,8 @@ module jDebug {
         services = <jasper.core.ServiceRegistrar>angularInjector.get('jasperService');
         animate = <ng.IAnimateService>angularInjector.get('$animate');
 
-        currentInspector = new inspector.JDebugInspector($compile, $rootScope, jasperComponentRegistrar);
-
+        dispatcher = new JDebugEventDispatcher();
+        currentInspector = new inspector.JDebugInspector($compile, $rootScope, jasperComponentRegistrar, dispatcher);
         components = new JDebugComponentInterceptor($templateCache, $compile, $http, scripts, jasperComponentRegistrar, currentInspector);
 
         if (jasperComponentRegistrar.setInterceptor) {
@@ -60,10 +60,8 @@ module jDebug {
         // override default directives:
         overrideDirectives();
 
-        jDebug.dispatcher = new JDebugEventDispatcher();
-        jDebug.dispatcher.connect();
-
         JDebugUi.initialize($compile, $rootScope, jasperComponentRegistrar);
+        dispatcher.connect();
     }
 
     export function makeRandomId():string {

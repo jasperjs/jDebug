@@ -12,7 +12,7 @@ module jDebug.inspector {
                 name: 'jdebugComponentInfo',
                 ctrl: JDebugComponentInfo,
                 properties: ['component','show'],
-                events: ['parent'],
+                events: ['parent', 'close', 'navigate'],
                 template: `
                     <div class="jdebug-component-info" ng-if="vm.show">
                         <p><b>Component:</b> {{vm.component.name}}</p>
@@ -28,15 +28,17 @@ module jDebug.inspector {
                             <b>Template file:</b> <a href="" ng-click="vm.navigateToTemplate()">{{vm.component.templateFile}}</a>
                         </p>
                         <p ng-if="vm.component.path">
-                            <b>Definition:</b> {{vm.component.path}}
+                            <b>Definition:</b>
+                            <a href="" ng-click="vm.navigateToDef()">{{vm.component.path}}</a>
                         </p>
                         <p>
                             <a href="" ng-click="vm.navigateToParent()">Parent component</a>
                         </p>
+                        <button type="button" ng-click="vm.closeWindow()">close</button>
                     </div>
                 `
             });
-            var node = compile('<jdebug-component-info bind-show="show" bind-component="component" on-parent="onParent()"></jdebug-component-info>')(this.infoScope);
+            var node = compile('<jdebug-component-info bind-show="show" bind-component="component" on-navigate="onNavigate($event)" on-close="onClose()" on-parent="onParent()"></jdebug-component-info>')(this.infoScope);
             this.infoNode = node[0];
             document.body.appendChild(this.infoNode);
         }
@@ -74,6 +76,14 @@ module jDebug.inspector {
             this.infoScope.onParent = cb;
         }
 
+        onClose(cb:Function) {
+            this.infoScope.onClose = cb;
+        }
+
+        onNavigate(cb:Function) {
+            this.infoScope.onNavigate = cb;
+        }
+
         private safeApply(){
             if(!this.infoScope.$$phase){
                 this.infoScope.$digest();
@@ -86,24 +96,37 @@ module jDebug.inspector {
      */
     export class JDebugComponentInfo {
         parent:jasper.core.IEventEmitter;
+        close:jasper.core.IEventEmitter;
+        navigate:jasper.core.IEventEmitter;
+
 
         component:any;
 
         show:boolean;
 
-        navigateToTemplate() {
-            console.log('navigate');
+        navigateToParent() {
+            this.parent.next();
         }
 
-        navigateToParent() {
-            console.log('move to parent');
-            this.parent.next();
+        navigateToDef(){
+            this.navigate.next(this.component.path);
+        }
+
+        navigateToTemplate(){
+            this.navigate.next(this.component.templateFile);
+        }
+
+        closeWindow(){
+            this.close.next();
         }
     }
 
     interface IJDebugComponentInfoScope extends ng.IScope {
         show: boolean;
         component: ComponentInfo;
+
         onParent: Function;
+        onNavigate: Function;
+        onClose: Function;
     }
 }

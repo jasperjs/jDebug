@@ -17,10 +17,18 @@ module jDebug.inspector {
 
         // current has focus (user clicked on them)
         private focused:boolean;
+        private focusedNode:Element;
 
-        constructor(compile:ng.ICompileService, rootScope:ng.IScope, components:jasper.core.HtmlComponentRegistrar) {
+        constructor(compile:ng.ICompileService,
+                    rootScope:ng.IScope,
+                    components:jasper.core.HtmlComponentRegistrar,
+                    private dispatcher: JDebugEventDispatcher) {
             this.componentInfoWindow = new JDebugComponentInfoWindow(rootScope, compile, components);
             this.componentInfoWindow.hide();
+
+            this.componentInfoWindow.onParent(()=>{ this.selectParentComponent(); });
+            this.componentInfoWindow.onClose(()=>{ this.clearFocus(); });
+            this.componentInfoWindow.onNavigate((path)=>{ this.navigateTo(path); });
         }
 
         addComponentNode(node:Node, jasperComponent:jasper.core.IHtmlComponentDefinition) {
@@ -56,6 +64,17 @@ module jDebug.inspector {
             }
         }
 
+        private selectParentComponent(){
+            console.log('to parent');
+        }
+
+        private navigateTo(path: string){
+            this.dispatcher.send({
+                type: 'ide_open',
+                data: path
+            });
+        }
+
         private deselectCurrentNode() {
             if (this.currentComponentNode) {
                 var clsList = this.currentComponentNode['classList'];
@@ -70,18 +89,28 @@ module jDebug.inspector {
         private onComponentClick(e) {
 
             if (this.focused) {
-                this.focused = false;
-                this.componentInfoWindow.hide();
+                this.clearFocus();
             } else {
-                var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
-                if (info) {
-                    this.focused = true;
-                    this.componentInfoWindow.show(info.component, <Element>info.node);
-                }
+                this.focusCurrentNode();
             }
 
             e.preventDefault();
             e.stopPropagation();
+        }
+
+        private clearFocus(){
+            this.focused = false;
+            this.focusedNode = null;
+            this.componentInfoWindow.hide();
+        }
+
+        private focusCurrentNode(){
+            var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
+            if (info) {
+                this.focused = true;
+                this.focusedNode = <Element>info.node;
+                this.componentInfoWindow.show(info.component, <Element>info.node);
+            }
         }
 
         private selectNode(node:Node) {
