@@ -59,12 +59,12 @@
     box-shadow: 0 2px 4px rgba(0,0,0,.2);
     background-clip: padding-box;
     box-sizing: border-box;
-    font-family: "Open Sans",san-serif;
     /* min-height: 100%; */
     font-size: 12px;
     line-height: 1.42857143;
     color: #333;
     padding: 5px;
+    font-family: Verdana, sans-serif;
 }
 
 /* Manage panel */
@@ -107,6 +107,7 @@
 .jdebug-panel__button {
     position: relative;
     display: inline-block;
+    vertical-align: bottom;
 }
 .jdebug-panel__button + .jdebug-panel__button {
     margin-left: 3px;
@@ -237,6 +238,32 @@ position: relative;     color: #333;     font-weight: 500;     line-height: 1.3;
 .jdebug-component-info__body span {
     /*  */
 }
-.jdebug-component-info__body b {
-    /*  */
+.jdebug-component-info__body b {/*  */
+    display: inline-block;
+}
+
+span.jdebug-panel__icon-button {/*  */
+    background-color: #D0D0D0;
+    padding: 0 6px;
+}
+.jdebug-panel__button input[type="checkbox"]:checked + span.jdebug-panel__icon-button {
+    background-color: #2D91EA;
+}
+.jdebug-panel__button input[type="checkbox"]:checked + span.jdebug-panel__icon-button svg {
+    fill: #fff;
+}
+
+
+.jdebug-panel__icon-button svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+    top: 5px;
+    position: relative;
+    fill: #444;
+}
+span.jdebug-panel__icon-button:after,
+span.jdebug-panel__icon-button:before {
+    content: "";
+    display: none;
 }

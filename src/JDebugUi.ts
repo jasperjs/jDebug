@@ -33,7 +33,13 @@ module jDebug {
 
                             <label class="jdebug-panel__button">
                                 <input ng-checked="vm.inspectorMode" ng-click="vm.toggleInspector()" type="checkbox" />
-                                <span>Inspect</span>
+                                <span class="jdebug-panel__icon-button">
+                                    <svg>
+                                        <g id="search_14">
+                                            <path d="M9.87146,9.16435l3.83565,3.83565l-0.707107,0.707107l-3.83565,-3.83565c-0.861926,0.70536 -1.96372,1.12854 -3.16435,1.12854c-2.76142,0 -5,-2.23858 -5,-5c0,-2.76142 2.23858,-5 5,-5c2.76142,0 5,2.23858 5,5c0,1.20063 -0.423181,2.30243 -1.12854,3.16435ZM6,2c2.20914,0 4,1.79086 4,4c0,2.20914 -1.79086,4 -4,4c-2.20914,0 -4,-1.79086 -4,-4c0,-2.20914 1.79086,-4 4,-4Z" style="fill-rule:evenodd;"></path>
+                                          </g>
+                                    </svg>
+                                </span>
                             </label>
                         </div>
 
