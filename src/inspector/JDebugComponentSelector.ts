@@ -16,14 +16,14 @@ module jDebug.inspector {
             document.body.appendChild(this.selectorNode);
         }
 
-        moveTo(componentNode:Element) {
+        moveTo(componentInfo: ComponentInfo, componentNode:Element) {
             var rect = this.calcRect(componentNode);
             this.selectorNode.style.left = rect.left + 'px';
             this.selectorNode.style.top = rect.top + 'px';
             this.selectorNode.style.height = (rect.bottom - rect.top) + 'px';
             this.selectorNode.style.width = (rect.right - rect.left) + 'px';
 
-            this.selectorLabel.innerHTML = componentNode.tagName;
+            this.selectorLabel.innerHTML = componentInfo.name;
 
             this.enable();
         }

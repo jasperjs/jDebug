@@ -1,7 +1,7 @@
 {
   "templateFile": "my-dialog.html",
   "type": "component",
-  "properties": "",
+  "properties": "color text",
   "events": "",
   "ctrl": "spa.main.components.MyDialog"
 }

@@ -60,7 +60,7 @@ module jDebug.inspector {
             var target:Node = e.target;
             var info = this.nodesMap.findComponentForNode(target);
             if (info) {
-                this.selectNode(info.node);
+                this.hoverComponent(info.node, info.component);
             }
         }
 
@@ -74,8 +74,8 @@ module jDebug.inspector {
             }
             var info = this.nodesMap.findComponentForNode(parent);
             if (info) {
-                this.selectNode(info.node);
-                this.focusCurrentNode();
+                this.hoverComponent(info.node, info.component);
+                this.focusHoverNode();
             }
         }
 
@@ -102,7 +102,7 @@ module jDebug.inspector {
             if (this.focused) {
                 this.clearFocus();
             } else {
-                this.focusCurrentNode();
+                this.focusHoverNode();
             }
 
             e.preventDefault();
@@ -115,7 +115,7 @@ module jDebug.inspector {
             this.componentInfoWindow.hide();
         }
 
-        private focusCurrentNode(){
+        private focusHoverNode(){
             var info = this.nodesMap.findComponentForNode(this.currentComponentNode);
             if (info) {
                 this.focused = true;
@@ -124,14 +124,14 @@ module jDebug.inspector {
             }
         }
 
-        private selectNode(node:Node) {
+        private hoverComponent(node:Node, info: ComponentInfo) {
             if (this.currentComponentNode === node) {
                 return;
             }
             this.deselectCurrentNode();
             this.bindCurrentNode(node);
 
-            this.selector.moveTo(<Element>node);
+            this.selector.moveTo(info, <Element>node);
             var clsList = this.currentComponentNode['classList'];
             if (clsList) {
                 clsList.add('jdebug-inspector-hover');
