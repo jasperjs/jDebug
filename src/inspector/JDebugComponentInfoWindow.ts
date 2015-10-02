@@ -174,6 +174,10 @@ module jDebug.inspector {
                                 break;
                         }
                     }
+                } else{
+                    this.properties = null;
+                    this.events = null;
+                    this.isLegacyApi = false;
                 }
             }
         }
