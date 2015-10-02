@@ -16,13 +16,11 @@
     color: #505050;
     padding: 4px 9px;
     position: absolute;
-    top: -25px;
-    border: 1px solid #97C2F7;
+    top: 0px;
     background: rgb(222, 237, 255);
-    border-bottom: none;
-    left: -1px;
-    box-sizing: border-box;
-
+    left: 0px;
+    border-right: 1px solid #97C2F7;
+    border-bottom: 1px solid #97C2F7;
 }
 
 .jdebug-inspector-hover{
@@ -226,15 +224,17 @@ position: relative;     color: #333;     font-weight: 500;     line-height: 1.3;
 }
 .jdebug-component-info__body ul {
     list-style: none;
-    padding: 0px 0 0 19px;
+    padding: 0px 0 0 0px;
     position: relative;
-    margin: 7px 0;
+    margin: 4px 0 0;
 }
 .jdebug-component-info__body li {
     /* margin-top: 1px; */
+    /* white-space: pre-wrap; */
+    /* word-wrap: break-word; */
 }
 .jdebug-component-info__body li:after {
-    content: "―";
+    /* content: "―"; */
     position: absolute;
     left: 0;
 }
@@ -265,4 +265,67 @@ span.jdebug-panel__icon-button:after,
 span.jdebug-panel__icon-button:before {
     content: "";
     display: none;
+}
+
+a.jdebug-component-info__button {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 3px 8px;
+    overflow: hidden;
+    text-decoration: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    border: 1px solid rgb(169, 213, 245);
+    font-weight: normal;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 1.3;
+    background-color: rgb(219, 240, 255);
+    cursor: pointer;
+    color: #3187dd;
+    border-radius: 2px;
+}
+.jdebug-component-info__button:hover,
+.jdebug-component-info__button:active,
+.jdebug-component-info__button:visited,
+.jdebug-component-info__button:focus {
+    text-decoration: none;
+    color: #3187dd;
+}
+/* Ховер */
+.jdebug-component-info__button:hover {
+    background-color: rgb(212, 236, 253);
+}
+/* Активный */
+.jdebug-component-info__button:active {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset;
+}
+.jdebug-component-info__sub-header {/*  */
+    font-size: 14px;
+    color: #000;
+}
+
+.jdebug-component-info__sub-prop {/*  */
+    color: green;
+}
+.jdebug-component-info__sub-val {/*  */
+    white-space: pre-line;
+    word-wrap: break-word;
+}
+
+.jdebug-component-info__sub-val-coma:after {
+    content: ", ";
+}
+.jdebug-component-info__sub-val-coma:last-child:after {
+    content: "";
 }

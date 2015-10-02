@@ -1,8 +1,8 @@
 {
   "templateFile": "my-button.html",
   "type": "component",
-  "properties": "color",
-  "events": "",
+  "properties": "color mod text",
+  "events": "click hovering",
   "require": "^homePage",
   "transclude": true,
   "ctrl": "spa.main.components.MyButton"

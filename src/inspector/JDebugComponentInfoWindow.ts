@@ -25,19 +25,20 @@ module jDebug.inspector {
                         <div class="jdebug-component-info__body">
                             <p style="color:red" ng-if="vm.isLegacyApi">Used legacy attributes bindings!</p>
                             <p ng-if="vm.properties">
-                                <b>Properties:</b>
+                                <span class="jdebug-component-info__sub-header">Properties</b>
                                 <ul>
-                                    <li ng-repeat="prop in vm.properties"><b>{{::prop.propertyName}}</b>: {{::prop.propertyValue || 'not specified'}}</li>
+                                    <li ng-repeat="prop in vm.properties">
+                                        <span class="jdebug-component-info__sub-prop">{{::prop.propertyName}}:</span> <span class="jdebug-component-info__sub-val">{{::prop.propertyValue || 'not specified'}}</span>
+                                    </li>
                                 </ul>
                             </p>
                             <p ng-if="vm.events">
-                                <b>Events:</b>
-                                <span ng-repeat="evnt in vm.events">{{::evnt.eventName}}&nbsp;</span>
+                                <span class="jdebug-component-info__sub-header">Events:</span> <span ng-repeat="evnt in vm.events" class="jdebug-component-info__sub-val-coma">{{::evnt.eventName}}</span>
                             </p>
                             <p>
-                                <a ng-if="vm.component.templateFile" href="" title="{{vm.component.templateFile}}" ng-click="vm.navigateToTemplate()">View template</a>
-                                <a ng-if="vm.component.path" href="" title="{{vm.component.path}}" ng-click="vm.navigateToDef()">View definition</a>
-                                <a href="" ng-click="vm.navigateToParent()">To parent component</a>
+                                <a class="jdebug-component-info__button" ng-if="vm.component.templateFile" href="" title="{{vm.component.templateFile}}" ng-click="vm.navigateToTemplate()">template</a>
+                                <a class="jdebug-component-info__button" ng-if="vm.component.path" href="" title="{{vm.component.path}}" ng-click="vm.navigateToDef()">definition</a>
+                                <a class="jdebug-component-info__button" href="" ng-click="vm.navigateToParent()">parent component</a>
                             </p>
                         </div>
                     </div>
