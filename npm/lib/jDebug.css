@@ -322,6 +322,10 @@ a.jdebug-component-info__button {
     white-space: pre-line;
     word-wrap: break-word;
 }
+.jdebug-component-info__sub-val em {
+    color: #aaa;
+    font-style: normal;
+}
 
 .jdebug-component-info__sub-val-coma:after {
     content: ", ";

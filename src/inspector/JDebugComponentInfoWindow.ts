@@ -28,7 +28,7 @@ module jDebug.inspector {
                                 <span class="jdebug-component-info__sub-header">Properties</b>
                                 <ul>
                                     <li ng-repeat="prop in vm.properties">
-                                        <span class="jdebug-component-info__sub-prop">{{::prop.propertyName}}:</span> <span class="jdebug-component-info__sub-val">{{::prop.propertyValue || 'not specified'}}</span>
+                                        <span class="jdebug-component-info__sub-prop">{{::prop.propertyName}}:</span> <span class="jdebug-component-info__sub-val"><span ng-if="prop.propertyValue">{{::prop.propertyValue}}</span><em ng-if="!prop.propertyValue">not specified</em></span>
                                     </li>
                                 </ul>
                             </p>
