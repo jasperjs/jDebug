@@ -55,8 +55,12 @@ module jDebug.inspector {
 
             for (var i = 0; i < componentNode.childNodes.length; i++) {
                 var childNode = <Element>componentNode.childNodes[i];
+                if (!childNode.getBoundingClientRect) {
+                    continue
+                }
                 rect = childNode.getBoundingClientRect();
-                if (!rect || (!rect.width && !rect.height)) {
+
+                if (!rect.width && !rect.height) {
                     continue;
                 }
                 if (rect.left < minLeft) {
