@@ -37,7 +37,6 @@ module jDebug.inspector {
         }
 
         destroy() {
-            this.selectorNode.remove();
             this.selectorNode = null;
         }
 
@@ -57,9 +56,13 @@ module jDebug.inspector {
             for (var i = 0; i < componentNode.childNodes.length; i++) {
                 var childNode = <Element>componentNode.childNodes[i];
                 if (!childNode.getBoundingClientRect) {
-                    continue;
+                    continue
                 }
                 rect = childNode.getBoundingClientRect();
+
+                if (!rect.width && !rect.height) {
+                    continue;
+                }
                 if (rect.left < minLeft) {
                     minLeft = rect.left;
                 }
